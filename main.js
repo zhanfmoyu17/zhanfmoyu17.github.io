@@ -93,4 +93,21 @@
       }
     });
   });
+
+  // ---------- 5. 相册：图片没放好时显示占位太阳 ----------
+  document.querySelectorAll('.shot').forEach(function (shot) {
+    var img = shot.querySelector('img');
+    if (!img) return;
+
+    function markEmpty() { shot.classList.add('is-empty'); }
+    function markOk() { shot.classList.remove('is-empty'); }
+
+    img.addEventListener('error', markEmpty);
+    img.addEventListener('load', markOk);
+
+    // 已经加载完成（或已经失败）的情况，补一次判断
+    if (img.complete) {
+      if (img.naturalWidth === 0) markEmpty();
+    }
+  });
 })();

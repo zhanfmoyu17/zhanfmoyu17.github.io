@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08070b">
+<title>生日快乐 · 星屑蛋糕</title>
+<meta name="description" content="一枚漂浮在夜色里的星屑生日蛋糕，点击蜡烛，许一个愿。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2309080d'/%3E%3Cpath d='M32 10c2 8 3 12 9 14-6 2-7 6-9 14-2-8-3-12-9-14 6-2 7-6 9-14z' fill='%23ffd23f'/%3E%3Ccircle cx='45' cy='41' r='3' fill='%236fe0ff'/%3E%3Ccircle cx='21' cy='43' r='2.4' fill='%23ff4fa3'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --mx: 0;
+    --my: 0;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    overflow:hidden;
+    background:
+      radial-gradient(90vmax 70vmax at 50% 28%, rgba(74,60,112,.26), transparent 62%),
+      radial-gradient(70vmax 55vmax at 50% 80%, rgba(128,84,42,.10), transparent 65%),
+      radial-gradient(130vmax 100vmax at 50% 48%, #0d0c14 0%, #08070b 55%, #050407 100%);
+    color:#fff;
+    font-family:"Helvetica Neue","SF Pro Display","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    user-select:none;
+    touch-action:manipulation;
+  }
+  #bg,#fx{
+    position:fixed; inset:0; width:100%; height:100%;
+    pointer-events:none;
+  }
+  #bg{ z-index:0; }
+  #fx{ z-index:3; }
+
+  .stage{
+    position:fixed; inset:0; z-index:2;
+    display:flex; align-items:center; justify-content:center;
+    animation:stageIn 1.9s cubic-bezier(.18,.8,.24,1) both;
+  }
+  @keyframes stageIn{
+    from{ opacity:0; transform:scale(.965) translateY(12px); filter:blur(7px); }
+    to  { opacity:1; transform:none; filter:blur(0); }
+  }
+
+  #scene{
+    width:730px; height:872px;
+    display:block;
+    overflow:visible;
+    will-change:transform;
+  }
+
+  /* ---------- svg type ---------- */
+  .cake-text{
+    font-family:"Helvetica Neue","SF Pro Display","PingFang SC","Microsoft YaHei",sans-serif;
+    font-weight:400;
+    paint-order:stroke;
+  }
+  .wish-group{ cursor:help; }
+  .wish-script{
+    font-family:"Xingkai SC","STXingkai","Snell Roundhand","Apple Chancery","Kaiti SC","STKaiti",cursive;
+    font-size:29px;
+    letter-spacing:2px;
+    fill:#fffaf0;
+    opacity:.68;
+    filter:blur(2.8px);
+    transition:filter .9s ease, opacity .9s ease;
+  }
+  .wish-group:hover .wish-script{ filter:blur(0); opacity:.95; }
+  body.blown .wish-script{
+    filter:blur(0);
+    opacity:1;
+    animation:wishReveal 1.4s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes wishReveal{
+    from{ opacity:0; transform:translateY(6px); }
+    to  { opacity:1; transform:translateY(0); }
+  }
+  body.blown #warmSpill{ opacity:0 !important; }
+
+  .hint-text{
+    font-family:"Helvetica Neue","SF Pro Display","PingFang SC",sans-serif;
+    font-size:10.5px;
+    letter-spacing:2.2px;
+    fill:rgba(255,255,255,.4);
+    transition:opacity .45s ease;
+  }
+
+  /* ---------- candle flame ---------- */
+  .flame-body{
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    animation:flicker 2.3s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{ transform:scale(1.12,1) rotate(-1.2deg); }
+    18%    { transform:scale(1.08,1.045) rotate(1.6deg); }
+    43%    { transform:scale(1.16,.972) rotate(-.7deg); }
+    66%    { transform:scale(1.1,1.02) rotate(1.9deg); }
+    84%    { transform:scale(1.14,.99) rotate(-.4deg); }
+  }
+  .flame-aura{
+    transform-box:fill-box;
+    transform-origin:50% 82%;
+    animation:auraPulse 3.8s ease-in-out infinite;
+    transition:opacity .45s ease;
+  }
+  @keyframes auraPulse{
+    0%,100%{ opacity:.72; transform:scale(1); }
+    50%    { opacity:1; transform:scale(1.09); }
+  }
+  #flameRig{
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    transition:opacity .32s ease, transform .55s cubic-bezier(.4,0,.2,1);
+  }
+  body.blown #flameRig{ opacity:0; transform:scale(.4,.06); }
+  body.blown .flame-aura{ opacity:0; }
+  #bgWarm{ transition:opacity 1.2s ease; }
+  body.blown #bgWarm{ opacity:.08; }
+  .wick-ember{ transition:fill .4s ease, opacity .4s ease; }
+  body.blown .wick-ember{ fill:#6d4a2d; opacity:.55; }
+
+  #candleHit{ cursor:pointer; outline:none; }
+  #candleHit:focus-visible{ stroke:rgba(255,226,170,.55); stroke-width:1.2; }
+
+  .plx{
+    transform:translate3d(calc(var(--mx) * var(--d, 0) * 1px), calc(var(--my) * var(--d, 0) * 1px), 0);
+    transition:transform .45s cubic-bezier(.2,.8,.2,1);
+    will-change:transform;
+  }
+
+  /* ---------- overlays ---------- */
+  .vignette{
+    position:fixed; inset:0; z-index:4; pointer-events:none;
+    background:radial-gradient(ellipse 72% 68% at 50% 45%, transparent 42%, rgba(0,0,0,.52) 100%);
+  }
+  .grain{
+    position:fixed; inset:-20%; z-index:5; pointer-events:none;
+    opacity:.055;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:180px 180px;
+  }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .flame-body,.flame-aura{ animation:none; }
+    .stage{ animation:none; }
+    .plx{ transition:none; transform:none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg" aria-hidden="true"></canvas>
+
+<main class="stage">
+  <svg id="scene" viewBox="0 0 720 860" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sceneTitle sceneDesc">
+    <title id="sceneTitle">星屑生日蛋糕</title>
+    <desc id="sceneDesc">深色背景里的一枚玻璃球圆环，中央是撒满彩色星屑的生日蛋糕，一根点燃的长蜡烛，底部有一行模糊的手写祝福。</desc>
+
+    <defs>
+      <filter id="wobble" x="-8%" y="-8%" width="116%" height="116%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.013 0.019" numOctaves="2" seed="9" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="blurSoft" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="9"/>
+      </filter>
+      <filter id="blurTiny" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="3"/>
+      </filter>
+      <filter id="blur6" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+      <filter id="glowSoft" x="-140%" y="-140%" width="380%" height="380%">
+        <feGaussianBlur stdDeviation="3.2" result="b"/>
+        <feMerge>
+          <feMergeNode in="b"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <radialGradient id="bgNebula" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#6b5aa0" stop-opacity=".26"/>
+        <stop offset="42%" stop-color="#352b54" stop-opacity=".13"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="coolHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#8ab8ff" stop-opacity=".18"/>
+        <stop offset="55%" stop-color="#5b78ff" stop-opacity=".07"/>
+        <stop offset="100%" stop-color="#4b6bff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="galaxyGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ff86cd" stop-opacity=".14"/>
+        <stop offset="42%" stop-color="#7a6cff" stop-opacity=".09"/>
+        <stop offset="100%" stop-color="#5b78ff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="warmHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffdca0" stop-opacity=".52"/>
+        <stop offset="36%" stop-color="#ffab52" stop-opacity=".22"/>
+        <stop offset="100%" stop-color="#ff8a2a" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="flameAura" cx="50%" cy="52%" r="50%">
+        <stop offset="0%" stop-color="#ffdf9a" stop-opacity=".75"/>
+        <stop offset="34%" stop-color="#ffb347" stop-opacity=".26"/>
+        <stop offset="100%" stop-color="#ff8a2a" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="flameOuter" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#ff7a1a"/>
+        <stop offset="42%" stop-color="#ffbe3d"/>
+        <stop offset="100%" stop-color="#ffe9a6"/>
+      </linearGradient>
+      <radialGradient id="flameMid" cx="50%" cy="76%" r="70%">
+        <stop offset="0%" stop-color="#fffbe4"/>
+        <stop offset="52%" stop-color="#ffdd7a"/>
+        <stop offset="100%" stop-color="#ffb347" stop-opacity=".25"/>
+      </radialGradient>
+      <radialGradient id="flameCore" cx="50%" cy="72%" r="64%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="58%" stop-color="#fff6d5"/>
+        <stop offset="100%" stop-color="#ffe28f" stop-opacity=".45"/>
+      </radialGradient>
+
+      <linearGradient id="plateTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fdfaf2"/>
+        <stop offset="52%" stop-color="#f0e9db"/>
+        <stop offset="100%" stop-color="#d6cebd"/>
+      </linearGradient>
+      <linearGradient id="plateSide" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e8e1d3"/>
+        <stop offset="48%" stop-color="#c3bbac"/>
+        <stop offset="100%" stop-color="#928b7f"/>
+      </linearGradient>
+      <radialGradient id="plateGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff7dd" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#fff2cc" stop-opacity="0"/>
+      </radialGradient>
+
+      <linearGradient id="cakeBody" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#222a3d"/>
+        <stop offset="52%" stop-color="#0c101a"/>
+        <stop offset="100%" stop-color="#060810"/>
+      </linearGradient>
+      <linearGradient id="cakeTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#263048"/>
+        <stop offset="100%" stop-color="#0b0f19"/>
+      </linearGradient>
+      <radialGradient id="bodySheen" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#b8d4ff" stop-opacity=".38"/>
+        <stop offset="60%" stop-color="#6f95ff" stop-opacity=".10"/>
+        <stop offset="100%" stop-color="#4f6bff" stop-opacity="0"/>
+      </radialGradient>
+
+      <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fffdf6"/>
+        <stop offset="46%" stop-color="#fff3d9"/>
+        <stop offset="100%" stop-color="#ecd0a4"/>
+      </linearGradient>
+      <linearGradient id="creamShade" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#7793cc" stop-opacity=".5"/>
+        <stop offset="30%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="72%" stop-color="#f6d9a8" stop-opacity=".08"/>
+        <stop offset="100%" stop-color="#c9975b" stop-opacity=".4"/>
+      </linearGradient>
+      <linearGradient id="creamBottom" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="55%" stop-color="#d5a263" stop-opacity=".06"/>
+        <stop offset="100%" stop-color="#a86f30" stop-opacity=".36"/>
+      </linearGradient>
+      <linearGradient id="bandGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#f4f9ff"/>
+        <stop offset="34%" stop-color="#dceaff"/>
+        <stop offset="100%" stop-color="#93b7e8"/>
+      </linearGradient>
+      <linearGradient id="bodyGloss" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#cfe4ff" stop-opacity=".55"/>
+        <stop offset="55%" stop-color="#7d9fdd" stop-opacity=".14"/>
+        <stop offset="100%" stop-color="#7d9fdd" stop-opacity="0"/>
+      </linearGradient>
+
+      <linearGradient id="candleBody" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#e6cb98"/>
+        <stop offset="24%" stop-color="#fff8e2"/>
+        <stop offset="58%" stop-color="#fffdf5"/>
+        <stop offset="100%" stop-color="#d9bd86"/>
+      </linearGradient>
+
+      <radialGradient id="orbCool" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#f2fcff" stop-opacity=".95"/>
+        <stop offset="22%" stop-color="#8fd8ff" stop-opacity=".6"/>
+        <stop offset="60%" stop-color="#5b9bff" stop-opacity=".18"/>
+        <stop offset="100%" stop-color="#4f8bff" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="orbWarm" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff9e8" stop-opacity=".95"/>
+        <stop offset="24%" stop-color="#ffe0a0" stop-opacity=".55"/>
+        <stop offset="60%" stop-color="#ffb14f" stop-opacity=".16"/>
+        <stop offset="100%" stop-color="#ff9a33" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="orbPink" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff0f8" stop-opacity=".9"/>
+        <stop offset="24%" stop-color="#ffa8d4" stop-opacity=".5"/>
+        <stop offset="65%" stop-color="#ff4fa3" stop-opacity=".14"/>
+        <stop offset="100%" stop-color="#ff2e8a" stop-opacity="0"/>
+      </radialGradient>
+
+      <clipPath id="bodyClip">
+        <path d="M 236 470 L 236 566 C 236 612 300 640 380 640 C 460 640 524 612 524 566 L 524 470 Z"/>
+      </clipPath>
+    </defs>
+
+    <!-- ===== ambient halo, ring, ticks ===== -->
+    <g id="ambient" class="plx" style="--d:5">
+      <ellipse cx="368" cy="404" rx="368" ry="350" fill="url(#bgNebula)"/>
+      <ellipse cx="380" cy="380" rx="310" ry="290" fill="url(#galaxyGlow)"/>
+      <ellipse cx="380" cy="470" rx="345" ry="300" fill="url(#coolHalo)"/>
+      <ellipse id="bgWarm" cx="380" cy="300" rx="230" ry="250" fill="url(#warmHalo)" opacity=".38"/>
+      <circle cx="368" cy="388" r="298" fill="none" stroke="rgba(255,255,255,.17)" stroke-width="1.1"/>
+      <circle cx="368" cy="388" r="291" fill="none" stroke="rgba(255,255,255,.07)" stroke-width=".8" stroke-dasharray="1 9"/>
+      <circle cx="368" cy="388" r="282" fill="none" stroke="rgba(255,255,255,.06)" stroke-width=".7" stroke-dasharray="86 250" transform="rotate(-38 368 388)"/>
+      <path d="M 150 214 A 298 298 0 0 1 350 92" fill="none" stroke="rgba(206,230,255,.5)" stroke-width="2.4" stroke-linecap="round" filter="url(#blurTiny)" opacity=".7"/>
+      <path d="M 596 574 A 298 298 0 0 1 500 657" fill="none" stroke="rgba(255,226,182,.28)" stroke-width="2" stroke-linecap="round" filter="url(#blurTiny)"/>
+      <g id="ticks"></g>
+      <path d="M 145 205 A 298 298 0 0 1 330 92" fill="none" stroke="rgba(178,208,255,.22)" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M 596 574 A 298 298 0 0 1 470 662" fill="none" stroke="rgba(255,216,170,.12)" stroke-width="1" stroke-linecap="round"/>
+    </g>
+
+    <g id="confettiBack" class="plx" style="--d:11"></g>
+    <g id="orbs" class="plx" style="--d:16"></g>
+
+    <!-- ===== plate ===== -->
+    <g id="plateGroup" filter="url(#wobble)">
+      <ellipse cx="380" cy="700" rx="242" ry="31" fill="#000" opacity=".64" filter="url(#blurSoft)"/>
+      <ellipse cx="380" cy="667" rx="232" ry="41" fill="url(#plateSide)"/>
+      <ellipse cx="380" cy="652" rx="232" ry="41" fill="url(#plateTop)" stroke="rgba(255,255,255,.34)" stroke-width=".9"/>
+      <ellipse cx="380" cy="654" rx="202" ry="30" fill="none" stroke="rgba(104,94,78,.065)" stroke-width="11" filter="url(#blurTiny)"/>
+      <path d="M 150 651 C 170 690 590 690 610 651" fill="none" stroke="rgba(88,78,62,.18)" stroke-width="1.2"/>
+      <path d="M 178 638 C 252 626 496 618 562 633" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="1.9" stroke-linecap="round" opacity=".26"/>
+      <ellipse cx="330" cy="624" rx="120" ry="13" fill="url(#plateGlow)" opacity=".6"/>
+      <ellipse cx="435" cy="663" rx="140" ry="18" fill="#dfe4f5" opacity=".14"/>
+      <ellipse cx="380" cy="643" rx="128" ry="19" fill="#3b2c19" opacity=".38" filter="url(#blurTiny)"/>
+      <g id="plateDeco"></g>
+    </g>
+
+    <!-- ===== cake body ===== -->
+    <g id="cakeBodyGroup">
+      <path d="M 236 470 L 236 566 C 236 612 300 640 380 640 C 460 640 524 612 524 566 L 524 470 Z" fill="url(#cakeBody)"/>
+      <ellipse cx="380" cy="470" rx="144" ry="40" fill="url(#cakeTop)"/>
+      <path d="M 236 470 L 236 566 C 236 612 300 640 380 640" fill="none" stroke="rgba(146,192,255,.32)" stroke-width="1.6"/>
+      <path d="M 524 470 L 524 566 C 524 612 460 640 380 640" fill="none" stroke="rgba(255,206,150,.16)" stroke-width="1.2"/>
+      <g clip-path="url(#bodyClip)">
+        <ellipse cx="292" cy="548" rx="95" ry="135" fill="url(#bodySheen)" opacity=".6"/>
+        <ellipse cx="472" cy="572" rx="95" ry="110" fill="url(#warmHalo)" opacity=".24" style="mix-blend-mode:screen"/>
+        <path d="M 254 486 C 246 528 250 574 277 604" fill="none" stroke="url(#bodyGloss)" stroke-width="10" stroke-linecap="round" opacity=".6"/>
+        <path d="M 505 500 C 512 540 507 578 490 602" fill="none" stroke="rgba(255,196,130,.18)" stroke-width="6" stroke-linecap="round" filter="url(#blurTiny)"/>
+        <g id="bodyConfetti"></g>
+        <g id="bandGroup"></g>
+        <path d="M 222 612 C 278 634 480 636 540 606" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.2"/>
+      </g>
+      <path d="M 236 470 L 236 566 C 236 612 300 640 380 640 C 460 640 524 612 524 566 L 524 470" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+    </g>
+
+    <!-- ===== cream cap (generated) ===== -->
+    <g id="capGroup" filter="url(#wobble)"></g>
+    <g id="creamDust"></g>
+
+    <!-- confetti heaped on the icing -->
+    <g id="pileGroup"></g>
+
+    <!-- ===== candle ===== -->
+    <g id="candleGroup">
+      <ellipse cx="380" cy="452" rx="26" ry="9" fill="#c79a5c" opacity=".35" filter="url(#blurTiny)"/>
+      <rect x="373" y="262" width="14" height="186" rx="6.8" fill="url(#candleBody)"/>
+      <rect x="373.4" y="262" width="13.2" height="186" rx="6.4" fill="none" stroke="rgba(255,255,255,.62)" stroke-width=".7"/>
+      <path d="M 375.4 270 C 374 280 373.6 288 375 292 C 376.6 295 378 293 377.6 288 L 377.5 270 Z" fill="#fff8e4"/>
+      <path d="M 384.4 268 C 385.6 277 386 285 384.8 289 C 383.4 292 382.2 290 382.5 285 L 382.5 268 Z" fill="#fff4d8" opacity=".85"/>
+      <ellipse cx="380" cy="264.5" rx="7.2" ry="3.6" fill="#fffbec"/>
+      <ellipse cx="380" cy="264.5" rx="4.6" ry="2" fill="#ffefc8"/>
+      <line x1="380" y1="251" x2="380" y2="264" stroke="#3c2c1d" stroke-width="2" stroke-linecap="round"/>
+      <circle class="wick-ember" cx="380" cy="251" r="2.2" fill="#ffd58c"/>
+      <rect x="373" y="262" width="14" height="186" rx="6.8" fill="none" stroke="rgba(255,212,150,.22)" stroke-width="1.2"/>
+    </g>
+
+    <!-- warm light spilling on the icing -->
+    <g id="warmSpill" style="mix-blend-mode:screen;transition:opacity 1s ease" opacity=".72">
+      <ellipse cx="380" cy="466" rx="196" ry="104" fill="url(#warmHalo)"/>
+      <ellipse cx="380" cy="525" rx="120" ry="66" fill="url(#warmHalo)" opacity=".55"/>
+    </g>
+    <g id="pileFront"></g>
+
+    <!-- ===== flame ===== -->
+    <g transform="translate(380 252)">
+      <circle class="flame-aura" r="152" fill="url(#flameAura)"/>
+      <g id="flameRig">
+        <g class="flame-body">
+          <path d="M 0 -4 C -26 -22 -30 -52 -24 -72 C -18 -94 -8 -108 0 -132 C 8 -108 18 -94 24 -72 C 30 -52 26 -22 0 -4 Z" fill="#ff9a2e" opacity=".28" filter="url(#blur6)"/>
+          <path d="M 0 0 C -16 -8 -24 -30 -22 -50 C -20 -72 -10 -92 0 -118 C 10 -92 20 -72 22 -50 C 24 -30 16 -8 0 0 Z" fill="url(#flameOuter)"/>
+          <path d="M 0 -2 C -10 -10 -15 -28 -13 -43 C -11 -58 -5 -72 0 -88 C 5 -72 11 -58 13 -43 C 15 -28 10 -10 0 -2 Z" fill="url(#flameMid)"/>
+          <path d="M 0 -6 C -5 -14 -7 -28 -5 -40 C -3 -50 1 -58 2 -66 C 5 -56 8 -44 7 -33 C 6 -20 4 -10 0 -6 Z" fill="url(#flameCore)"/>
+          <ellipse cx="0" cy="-5" rx="8" ry="6" fill="#9fdcff" opacity=".38" filter="url(#blurTiny)"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- a few pieces in front of the cake -->
+    <g id="frontBits"></g>
+
+    <!-- ===== cake lettering ===== -->
+    <g id="cakeText" class="cake-text" style="filter:drop-shadow(0 1px 5px rgba(0,0,0,.9))">
+      <text x="456" y="574" text-anchor="middle" font-size="14.6" letter-spacing=".9" fill="#fffdf8" opacity="1">happy birthday</text>
+      <text x="456" y="591" text-anchor="middle" font-size="7.4" letter-spacing="2.3" fill="#fffdf8" opacity=".5">make a wish</text>
+    </g>
+
+    <!-- ===== blurred handwriting ===== -->
+    <g id="wishGroup" class="wish-group">
+      <text class="wish-script" x="368" y="781" text-anchor="middle">愿所有的星光，都为你而亮</text>
+      <text id="hintText" class="hint-text" x="368" y="819" text-anchor="middle">点击蜡烛 · 许个愿</text>
+    </g>
+
+    <rect id="candleHit" x="326" y="118" width="108" height="354" rx="26" fill="transparent" pointer-events="all" tabindex="0" role="button" aria-label="吹灭蜡烛，许一个愿望"><title>点击吹灭蜡烛 · 再点一次重新点亮</title></rect>
+  </svg>
+</main>
+
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div id="live" class="sr-only" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============================================================
+     tiny helpers
+  ============================================================ */
+  const NS = "http://www.w3.org/2000/svg";
+  const $ = (s, root) => (root || document).querySelector(s);
+  const svgEl = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    if(attrs) for(const k in attrs){
+      if(attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]);
+    }
+    if(parent) parent.appendChild(n);
+    return n;
+  };
+
+  function mulberry32(a){
+    return function(){
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  const R = mulberry32(0xB17ADA9);
+  const rand = (a, b) => a + (b - a) * R();
+  const pick = arr => arr[(R() * arr.length) | 0];
+
+  /* ============================================================
+     palette
+  ============================================================ */
+  const WEIGHTED = [
+    ["#ffd23f", 7], ["#ffb63d", 4], ["#ffcf5c", 3],
+    ["#4f9bff", 6], ["#2f6bff", 4], ["#7fc4ff", 3],
+    ["#6fe0ff", 5], ["#a9d9ff", 2],
+    ["#ff3b2f", 4], ["#ff6b5e", 3],
+    ["#ff4fa3", 5], ["#ff2e8a", 2],
+    ["#a26bff", 4], ["#c9b6ff", 2],
+    ["#4de3c1", 3], ["#fff6e6", 3]
+  ];
+  const COLORS = WEIGHTED.flatMap(p => Array(p[1]).fill(p[0]));
+  const pickColor = () => pick(COLORS);
+  const CANVAS_COLORS = [
+    "#ffd23f","#ffcf5c","#4f9bff","#6fe0ff","#a9d9ff",
+    "#ff3b2f","#ff6b5e","#ff4fa3","#ff2e8a","#a26bff",
+    "#c9b6ff","#4de3c1","#fff6e6","#ffb63d"
+  ];
+
+  /* ============================================================
+     shapes
+  ============================================================ */
+  function starD(r, points, inner, jitter){
+    points = points || 5; inner = inner || 0.45;
+    if(jitter === undefined) jitter = 0.08;
+    let d = "";
+    for(let i = 0; i < points * 2; i++){
+      const a = -Math.PI / 2 + i * Math.PI / points;
+      const rr = (i % 2 ? inner : 1) * r * (1 + (R() - .5) * jitter);
+      const x = Math.cos(a) * rr, y = Math.sin(a) * rr;
+      d += (i ? "L" : "M") + x.toFixed(2) + " " + y.toFixed(2);
+    }
+    return d + "Z";
+  }
+  function sparkleD(r){
+    const q = r * 0.16;
+    return `M 0 ${-r} Q ${q} ${-q} ${r} 0 Q ${q} ${q} 0 ${r} Q ${-q} ${q} ${-r} 0 Q ${-q} ${-q} 0 ${-r} Z`;
+  }
+
+  function addPiece(parent, o){
+    if(!parent) return null;
+    const g = svgEl("g", {
+      transform: `translate(${o.x.toFixed(1)} ${o.y.toFixed(1)}) rotate(${(o.rot || 0).toFixed(1)})`,
+      opacity: o.opacity === undefined ? 1 : o.opacity
+    }, parent);
+    if(o.glow) g.setAttribute("filter", "url(#glowSoft)");
+
+    const shape = o.shape || "star";
+    if(shape === "dot"){
+      svgEl("circle", { r: o.r, fill: o.color }, g);
+      if(o.r > 4.4) svgEl("circle", { cx: -o.r * .28, cy: -o.r * .3, r: o.r * .32, fill: "#fff", opacity: .32 }, g);
+    }else if(shape === "ring"){
+      svgEl("circle", { r: o.r, fill: "none", stroke: o.color, "stroke-width": Math.max(1, o.r * .18) }, g);
+    }else if(shape === "sparkle"){
+      svgEl("path", { d: sparkleD(o.r), fill: o.color }, g);
+      svgEl("circle", { r: Math.max(.9, o.r * .13), fill: "#fff", opacity: .55 }, g);
+    }else{
+      const p = svgEl("path", { d: starD(o.r, 5, .44, .12) }, g);
+      if(o.outline){
+        p.setAttribute("fill", "rgba(255,255,255,.14)");
+        p.setAttribute("stroke", "#fff");
+        p.setAttribute("stroke-width", "1.3");
+        p.setAttribute("stroke-linejoin", "round");
+      }else{
+        p.setAttribute("fill", o.color);
+      }
+    }
+    return g;
+  }
+
+  /* ============================================================
+     ring ticks
+  ============================================================ */
+  (function(){
+    const g = $("#ticks");
+    for(let i = 0; i < 30; i++){
+      if(i % 2 === 0) continue;
+      const a = i / 30 * Math.PI * 2 + 0.06;
+      const c = Math.cos(a), s = Math.sin(a);
+      const inner = i % 4 === 1 ? 290 : 294;
+      svgEl("line", {
+        x1: (368 + c * inner).toFixed(1), y1: (388 + s * inner).toFixed(1),
+        x2: (368 + c * 300).toFixed(1), y2: (388 + s * 300).toFixed(1),
+        stroke: "rgba(255,255,255,.17)", "stroke-width": i % 4 === 1 ? 1.2 : .8
+      }, g);
+    }
+    for(let i = 0; i < 6; i++){
+      const a = -2.3 + i * .16;
+      svgEl("circle", {
+        cx: (368 + Math.cos(a) * 304).toFixed(1),
+        cy: (388 + Math.sin(a) * 304).toFixed(1),
+        r: 1.2, fill: "rgba(255,255,255,.25)"
+      }, g);
+    }
+  })();
+
+  /* ============================================================
+     glowing orbs (behind)
+  ============================================================ */
+  (function(){
+    const g = $("#orbs");
+    const orbs = [
+      { x: 508, y: 248, r: 24, kind: "Cool" },
+      { x: 151, y: 505, r: 17, kind: "Cool" },
+      { x: 601, y: 384, r: 14, kind: "Warm" },
+      { x: 250, y: 188, r: 10, kind: "Cool" },
+      { x: 566, y: 562, r: 11, kind: "Pink" },
+      { x: 96, y: 306, r: 8, kind: "Cool" }
+    ];
+    orbs.forEach(o => {
+      svgEl("circle", { cx: o.x, cy: o.y, r: o.r * 2.5, fill: `url(#orb${o.kind})`, opacity: .75 }, g);
+      svgEl("circle", { cx: o.x, cy: o.y, r: o.r * .3, fill: "#f8feff", opacity: .9, filter: "url(#glowSoft)" }, g);
+    });
+  })();
+
+  /* ============================================================
+     confetti galaxy
+  ============================================================ */
+  const confettiBack = $("#confettiBack");
+
+  const HEROES = [
+    { x: 512, y: 306, r: 16, color: "#ff3b2f", shape: "star", rot: 12 },
+    { x: 572, y: 441, r: 15, color: "#ffd23f", shape: "star", rot: -14, glow: 1 },
+    { x: 196, y: 398, r: 14, color: "#ffd23f", shape: "star", rot: 24, glow: 1 },
+    { x: 492, y: 242, r: 13, color: "#fff6e6", shape: "star", rot: 0, outline: 1 },
+    { x: 322, y: 451, r: 13, color: "#2f6bff", shape: "star", rot: -8 },
+    { x: 226, y: 556, r: 12, color: "#ff4fa3", shape: "star", rot: 18 },
+    { x: 424, y: 300, r: 12, color: "#ffcf5c", shape: "star", rot: 6, glow: 1 },
+    { x: 604, y: 344, r: 11, color: "#6fe0ff", shape: "star", rot: -20 },
+    { x: 262, y: 300, r: 10, color: "#4de3c1", shape: "star", rot: 10 },
+    { x: 150, y: 470, r: 9, color: "#a9d9ff", shape: "sparkle", rot: 0, glow: 1 },
+    { x: 600, y: 560, r: 9, color: "#ff6b5e", shape: "sparkle", rot: 0 },
+    { x: 104, y: 342, r: 5, color: "#fff6e6", shape: "dot" },
+    { x: 640, y: 238, r: 4, color: "#6fe0ff", shape: "dot" },
+    { x: 92, y: 588, r: 6, color: "#a26bff", shape: "dot" },
+    { x: 642, y: 466, r: 5, color: "#ffd23f", shape: "dot" },
+    { x: 84, y: 424, r: 3.4, color: "#ff4fa3", shape: "dot" }
+  ];
+  HEROES.forEach(p => addPiece(confettiBack, p));
+
+  function cloudPoint(){
+    const t = Math.pow(R(), 0.72);
+    const y = 480 - t * 372;
+    const spread = 110 + t * 240;
+    let x = 380 + ((R() + R() + R() - 1.5) / 1.5) * spread;
+    x = Math.max(64, Math.min(656, x));
+    return { x, y };
+  }
+
+  for(let i = 0; i < 74; i++){
+    const p = cloudPoint();
+    if(Math.hypot(p.x - 380, p.y - 245) < 58) continue;
+    const big = R() < .16;
+    const shape = R() < .5 ? "star" : (R() < .62 ? "dot" : (R() < .8 ? "sparkle" : "ring"));
+    addPiece(confettiBack, {
+      x: p.x, y: p.y,
+      r: big ? rand(8, 15) : rand(2.6, 8.5),
+      color: pickColor(),
+      shape: shape,
+      rot: rand(0, 360),
+      opacity: rand(.55, 1),
+      glow: R() < .08
+    });
+  }
+
+  for(let i = 0; i < 30; i++){
+    const side = R() < .5;
+    addPiece(confettiBack, {
+      x: side ? rand(60, 200) : rand(540, 668),
+      y: rand(290, 640),
+      r: rand(2, 7),
+      color: pickColor(),
+      shape: R() < .5 ? "dot" : (R() < .5 ? "star" : "sparkle"),
+      rot: rand(0, 360),
+      opacity: rand(.35, .9)
+    });
+  }
+
+  for(let i = 0; i < 16; i++){
+    addPiece(confettiBack, {
+      x: rand(150, 600), y: rand(45, 190),
+      r: rand(1.6, 4.8), color: pickColor(),
+      shape: R() < .6 ? "dot" : "star", rot: rand(0, 360),
+      opacity: rand(.25, .7)
+    });
+  }
+
+  // dense constellation clusters around the cake
+  const clusterSeeds = [
+    { x: 286, y: 214, n: 9, s: 48 },
+    { x: 566, y: 300, n: 8, s: 42 },
+    { x: 150, y: 268, n: 7, s: 38 },
+    { x: 582, y: 500, n: 8, s: 40 },
+    { x: 186, y: 596, n: 6, s: 34 },
+    { x: 466, y: 198, n: 6, s: 30 }
+  ];
+  clusterSeeds.forEach(cl => {
+    for(let i = 0; i < cl.n; i++){
+      const a = R() * Math.PI * 2, d = Math.sqrt(R()) * cl.s;
+      addPiece(confettiBack, {
+        x: cl.x + Math.cos(a) * d, y: cl.y + Math.sin(a) * d * .8,
+        r: R() < .25 ? rand(7, 11) : rand(2.2, 5.5),
+        color: pickColor(),
+        shape: R() < .35 ? "dot" : (R() < .2 ? "sparkle" : "star"),
+        rot: rand(0, 360), opacity: rand(.6, 1),
+        glow: R() < .12
+      });
+    }
+  });
+
+  // a low arc of sparkle by the plate
+  for(let i = 0; i < 18; i++){
+    addPiece(confettiBack, {
+      x: rand(100, 660), y: rand(620, 700),
+      r: rand(1.4, 4.2), color: pickColor(),
+      shape: R() < .55 ? "dot" : "sparkle",
+      rot: rand(0, 360), opacity: rand(.25, .8)
+    });
+  }
+
+  /* ============================================================
+     plate decoration
+  ============================================================ */
+  (function(){
+    const g = $("#plateDeco");
+    for(let i = 0; i < 24; i++){
+      const a = Math.PI * (0.04 + 0.92 * R());
+      const rad = rand(188, 232);
+      addPiece(g, {
+        x: 380 + Math.cos(a) * rad,
+        y: 652 + Math.sin(a) * rand(20, 35),
+        r: rand(2, 6.4),
+        color: pickColor(),
+        shape: R() < .68 ? "dot" : "star",
+        rot: rand(0, 360),
+        opacity: rand(.6, 1)
+      });
+    }
+    for(let i = 0; i < 14; i++){
+      addPiece(g, {
+        x: rand(175, 590), y: rand(638, 664),
+        r: rand(1, 2.6), color: "#fffaf0",
+        shape: "dot", opacity: rand(.3, .7)
+      });
+    }
+  })();
+
+  /* ============================================================
+     body confetti + piped frosting at the base
+  ============================================================ */
+  (function(){
+    const g = $("#bodyConfetti");
+    for(let i = 0; i < 64; i++){
+      const shape = R() < .2 ? "dot" : (R() < .28 ? "sparkle" : "star");
+      addPiece(g, {
+        x: rand(244, 516),
+        y: rand(484, 626),
+        r: shape === "dot" ? rand(1.8, 5) : rand(2.2, 8.2),
+        color: pickColor(),
+        shape: shape,
+        rot: rand(0, 360),
+        opacity: rand(.55, 1),
+        glow: R() < .05
+      });
+    }
+    for(let i = 0; i < 46; i++){
+      addPiece(g, {
+        x: rand(242, 518), y: rand(478, 630),
+        r: rand(.8, 2.1), color: pickColor(), shape: "dot",
+        opacity: rand(.22, .65)
+      });
+    }
+    [
+      { x: 298, y: 520, r: 11, color: "#ffd23f", glow: 1 },
+      { x: 496, y: 585, r: 9, color: "#6fe0ff" },
+      { x: 330, y: 608, r: 7.6, color: "#ff4fa3" },
+      { x: 472, y: 508, r: 7.4, color: "#a26bff" },
+      { x: 264, y: 574, r: 6.4, color: "#4de3c1" }
+    ].forEach(p => addPiece(g, {
+      x: p.x, y: p.y, r: p.r, color: p.color,
+      shape: "star", rot: rand(0, 360), opacity: 1, glow: p.glow
+    }));
+
+    const band = $("#bandGroup");
+
+    let wave = "M 226 608";
+    for(let x = 226; x < 534; x += 38){
+      wave += ` q 19 ${(-rand(12, 25)).toFixed(1)} 38 0`;
+    }
+    const bandD = wave + " L 540 666 L 220 666 Z";
+
+    svgEl("path", { d: bandD, transform: "translate(0 10)", fill: "#3c2814", opacity: .42, filter: "url(#blur6)" }, band);
+    svgEl("path", { d: bandD, transform: "translate(0 -8)", fill: "#dceaff", opacity: .55 }, band);
+    svgEl("path", { d: bandD, fill: "url(#bandGrad)", stroke: "rgba(255,255,255,.5)", "stroke-width": 1 }, band);
+    svgEl("path", { d: wave, fill: "none", stroke: "#fff", "stroke-width": 3, "stroke-linecap": "round", opacity: .75, filter: "url(#blurTiny)" }, band);
+    svgEl("path", { d: wave, transform: "translate(0 5)", fill: "none", stroke: "#9fc0ee", "stroke-width": 3, "stroke-linecap": "round", opacity: .38 }, band);
+    svgEl("path", { d: "M 230 634 C 286 648 478 648 532 630", fill: "none", stroke: "#ffffff", "stroke-width": 2.4, opacity: .4 }, band);
+
+    for(let i = 0; i < 20; i++){
+      addPiece(band, {
+        x: rand(258, 502), y: rand(596, 636),
+        r: rand(1.8, 4), color: pickColor(), shape: "dot",
+        opacity: rand(.6, 1)
+      });
+    }
+    for(let i = 0; i < 14; i++){
+      addPiece(band, {
+        x: rand(250, 510), y: rand(600, 632),
+        r: rand(1.2, 2.6), color: "#ffffff", shape: "dot",
+        opacity: rand(.25, .6)
+      });
+    }
+  })();
+
+  /* ============================================================
+     cream cap + drips
+  ============================================================ */
+  (function(){
+    const cap = $("#capGroup");
+
+    const top = [];
+    const N = 14;
+    for(let i = 0; i <= N; i++){
+      const t = i / N;
+      const x = 232 + t * 296;
+      let y = 474 - Math.sin(Math.PI * t) * 46
+                - Math.max(0, Math.sin((t - .26) * Math.PI * 1.5)) * 6
+                + (R() - .5) * 8;
+      if(i === 0 || i === N) y = 480;
+      top.push({ x, y });
+    }
+
+    let d = "M 226 516 C 217 504 220 490 232 485";
+    let topLine = "M 232 485";
+    for(let i = 1; i <= N; i++){
+      const a = top[i - 1], b = top[i];
+      const mx = ((a.x + b.x) / 2).toFixed(1);
+      const seg = ` C ${mx} ${a.y.toFixed(1)}, ${mx} ${b.y.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+      d += seg;
+      topLine += seg;
+    }
+    d += " C 540 490 542 502 534 516";
+    topLine += " C 540 490 542 502 534 516";
+
+    function dripEdge(x1, y, x2){
+      let s = "", x = x1, cy = y;
+      while(x - 16 > x2){
+        const maxDrop = x > 400 ? 26 : 46;
+        const seg = Math.min(rand(16, 30), x - x2);
+        const nx = Math.max(x2, x - seg);
+        const c = x - seg * .5;
+        const nextY = y + (R() - .5) * 7;
+        if(R() < .7){
+          const w = Math.min(rand(6, 14), seg * .42);
+          let drop = R() < .8 ? rand(6, maxDrop * .7) : rand(maxDrop * .6, maxDrop);
+          if(R() < .07) drop = Math.min(drop + 10, 52);
+          s += ` C ${(x - 2).toFixed(1)} ${(cy + 2).toFixed(1)}, ${(x - 4).toFixed(1)} ${(cy + 4).toFixed(1)}, ${(c + w).toFixed(1)} ${(cy + 2).toFixed(1)}`;
+          s += ` C ${(c + w * .9).toFixed(1)} ${(cy + 3 + drop * .45).toFixed(1)}, ${(c + w * .5).toFixed(1)} ${(cy + 4 + drop).toFixed(1)}, ${c.toFixed(1)} ${(cy + 4 + drop).toFixed(1)}`;
+          s += ` C ${(c - w * .5).toFixed(1)} ${(cy + 4 + drop).toFixed(1)}, ${(c - w * .9).toFixed(1)} ${(cy + 3 + drop * .45).toFixed(1)}, ${(c - w).toFixed(1)} ${(cy + 2).toFixed(1)}`;
+          s += ` C ${(nx + 4).toFixed(1)} ${(cy + 4).toFixed(1)}, ${(nx + 2).toFixed(1)} ${nextY.toFixed(1)}, ${nx.toFixed(1)} ${nextY.toFixed(1)}`;
+        }else{
+          s += ` C ${(x - seg * .28).toFixed(1)} ${(cy + 5).toFixed(1)}, ${(nx + seg * .28).toFixed(1)} ${(nextY + 5).toFixed(1)}, ${nx.toFixed(1)} ${nextY.toFixed(1)}`;
+        }
+        x = nx;
+        cy = nextY;
+      }
+      s += ` L ${x2} ${cy}`;
+      return s;
+    }
+    d += dripEdge(534, 516, 226);
+    d += " Z";
+
+    svgEl("path", { d, transform: "translate(0 18)", fill: "#5f3d1b", opacity: .45, filter: "url(#blur6)" }, cap);
+    svgEl("path", { d, fill: "url(#cream)", stroke: "rgba(186,145,91,.55)", "stroke-width": 1, "stroke-linejoin": "round" }, cap);
+    svgEl("path", { d, fill: "url(#creamShade)", opacity: .95 }, cap);
+    svgEl("path", { d, fill: "url(#creamBottom)", opacity: .85 }, cap);
+    svgEl("path", { d, fill: "none", stroke: "rgba(255,222,172,.34)", "stroke-width": 1.3, "stroke-linejoin": "round", filter: "url(#blurTiny)" }, cap);
+    svgEl("path", { d, fill: "none", stroke: "rgba(159,112,59,.32)", "stroke-width": 2.2, "stroke-linejoin": "round", filter: "url(#blurTiny)" }, cap);
+
+    // soft folds running across the icing
+    const fold = (dd, stroke, width, op) => svgEl("path", {
+      d: dd, fill: "none", stroke, "stroke-width": width,
+      "stroke-linecap": "round", opacity: op, filter: "url(#blurTiny)"
+    }, cap);
+    fold("M 244 506 C 292 491 330 514 374 500 C 414 487 458 508 522 492", "#d9b781", 8, .5);
+    fold("M 254 501 C 300 488 334 509 374 496 C 414 484 456 504 514 488", "#ffffff", 3.4, .55);
+    fold("M 470 516 C 486 508 502 512 512 505", "#d9b781", 5, .5);
+    fold("M 246 514 C 260 508 274 511 286 505", "#ffffff", 3, .4);
+    fold("M 300 482 C 320 470 346 476 360 466", "#fff4dd", 5, .4);
+
+    svgEl("path", { d: topLine, fill: "none", stroke: "rgba(255,255,255,.62)", "stroke-width": 2.1, "stroke-linecap": "round" }, cap);
+    const shine = svgEl("path", { d: topLine, fill: "none", stroke: "#fff", "stroke-width": 5, "stroke-linecap": "round", opacity: .3, filter: "url(#blurTiny)" }, cap);
+    shine.setAttribute("transform", "translate(0 -2)");
+    svgEl("path", { d: d, fill: "none", stroke: "rgba(255,255,255,.25)", "stroke-width": .7 }, cap);
+  })();
+
+  /* ============================================================
+     heaped confetti on top
+  ============================================================ */
+  (function(){
+    const g = $("#creamDust");
+    for(let i = 0; i < 34; i++){
+      addPiece(g, {
+        x: rand(248, 512), y: rand(482, 544),
+        r: rand(.8, 2.2), color: pickColor(), shape: "dot",
+        opacity: rand(.35, .9)
+      });
+    }
+    for(let i = 0; i < 9; i++){
+      addPiece(g, {
+        x: rand(268, 500), y: rand(480, 538),
+        r: rand(1.4, 3.2), color: "#fffdf6", shape: "sparkle",
+        opacity: rand(.4, .95), rot: rand(0, 90)
+      });
+    }
+  })();
+
+  function addPile(parent, count, cy, ry, spreadX){
+    for(let i = 0; i < count; i++){
+      const a = R() * Math.PI * 2;
+      const rad = Math.sqrt(R());
+      const x = 384 + Math.cos(a) * rad * spreadX;
+      const y = cy + Math.sin(a) * rad * ry - (1 - rad) * 8;
+      const big = R() < .26;
+      addPiece(parent, {
+        x, y,
+        r: big ? rand(9, 17) : rand(2.6, 8),
+        color: pickColor(),
+        shape: R() < .16 ? "dot" : (R() < .28 ? "sparkle" : "star"),
+        rot: rand(0, 360),
+        opacity: rand(.8, 1),
+        glow: R() < .05
+      });
+    }
+  }
+  addPile($("#pileGroup"), 86, 450, 48, 158);
+  addPile($("#pileFront"), 26, 465, 28, 106);
+
+  [
+    { x: 304, y: 434, r: 16, color: "#ff3b2f", glow: 1 },
+    { x: 438, y: 452, r: 14, color: "#ffd23f" },
+    { x: 352, y: 476, r: 12, color: "#2f6bff" },
+    { x: 494, y: 430, r: 10, color: "#ff4fa3", glow: 1 },
+    { x: 252, y: 470, r: 9, color: "#4de3c1" },
+    { x: 402, y: 414, r: 10, color: "#ffcf5c" }
+  ].forEach(p => addPiece($("#pileGroup"), {
+    x: p.x, y: p.y, r: p.r, color: p.color,
+    shape: "star", rot: rand(0, 360), opacity: 1, glow: p.glow
+  }));
+
+  for(let i = 0; i < 24; i++){
+    addPiece($("#pileGroup"), {
+      x: rand(252, 512), y: rand(496, 536),
+      r: rand(2, 6.2), color: pickColor(),
+      shape: R() < .45 ? "dot" : "star",
+      rot: rand(0, 360), opacity: rand(.7, 1)
+    });
+  }
+
+  /* ============================================================
+     front pieces
+  ============================================================ */
+  (function(){
+    const g = $("#frontBits");
+    const pts = [
+      { x: 262, y: 498, r: 5.5, c: "#ffd23f", s: "star" },
+      { x: 506, y: 520, r: 4.5, c: "#6fe0ff", s: "dot" },
+      { x: 290, y: 604, r: 4, c: "#ff4fa3", s: "star" },
+      { x: 486, y: 610, r: 5, c: "#a9d9ff", s: "sparkle" },
+      { x: 470, y: 470, r: 3.4, c: "#fff6e6", s: "dot" },
+      { x: 320, y: 476, r: 4, c: "#ff6b5e", s: "Dot" }
+    ];
+    pts.forEach(p => addPiece(g, { x: p.x, y: p.y, r: p.r, color: p.c, shape: p.s.toLowerCase(), rot: rand(0, 360) }));
+    addPiece(g, { x: 344, y: 507, r: 8.5, color: "#fff", shape: "star", outline: 1, rot: 14 });
+    addPiece(g, { x: 462, y: 500, r: 5.5, color: "#fff", shape: "star", outline: 1, rot: -20 });
+  })();
+
+  /* ============================================================
+     layout
+  ============================================================ */
+  const scene = $("#scene");
+  let sceneBox = { left: 0, top: 0, width: 1, height: 1 };
+  function fitScene(){
+    const vw = window.innerWidth, vh = window.innerHeight;
+    let h = Math.min(vh - 18, 1010);
+    let w = h * 720 / 860;
+    if(vw < 640){
+      // let the poster fill a phone more generously while keeping the plate in frame
+      const plateMax = (vw - 14) * 720 / 464;
+      w = Math.min(w, plateMax);
+      h = w * 860 / 720;
+    }else{
+      const maxW = vw - 16;
+      if(w > maxW){ w = maxW; h = w * 860 / 720; }
+    }
+    scene.style.width = Math.round(w) + "px";
+    scene.style.height = Math.round(h) + "px";
+  }
+  function measure(){
+    const r = scene.getBoundingClientRect();
+    sceneBox = { left: r.left, top: r.top, width: r.width || 1, height: r.height || 1 };
+  }
+  const vbPoint = (x, y) => ({
+    x: sceneBox.left + x / 720 * sceneBox.width,
+    y: sceneBox.top + y / 860 * sceneBox.height
+  });
+
+  /* ============================================================
+     canvases
+  ============================================================ */
+  const bg = $("#bg"), fx = $("#fx");
+  const bctx = bg.getContext("2d");
+  const fctx = fx.getContext("2d");
+  const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, DPR = 1;
+
+  let backStars = [], bokeh = [];
+  let ambient = [], bursts = [], sparks = [], smoke = [], ripples = [];
+
+  const glowCache = {};
+  function glowSprite(color){
+    if(glowCache[color]) return glowCache[color];
+    const c = document.createElement("canvas");
+    c.width = c.height = 64;
+    const g = c.getContext("2d");
+    const rg = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    rg.addColorStop(0, color);
+    rg.addColorStop(.32, color + "88");
+    rg.addColorStop(1, color + "00");
+    g.fillStyle = rg;
+    g.fillRect(0, 0, 64, 64);
+    glowCache[color] = c;
+    return c;
+  }
+  let smokeSprite = null;
+  function getSmokeSprite(){
+    if(smokeSprite) return smokeSprite;
+    const c = document.createElement("canvas");
+    c.width = c.height = 128;
+    const g = c.getContext("2d");
+    const rg = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    rg.addColorStop(0, "rgba(233,238,248,.55)");
+    rg.addColorStop(.45, "rgba(202,212,232,.25)");
+    rg.addColorStop(1, "rgba(190,200,225,0)");
+    g.fillStyle = rg;
+    g.fillRect(0, 0, 128, 128);
+    smokeSprite = c;
+    return c;
+  }
+
+  function seedBack(){
+    backStars = [];
+    const n = Math.min(170, Math.round(W * H / 11000));
+    for(let i = 0; i < n; i++){
+      backStars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: .4 + Math.random() * 1.35,
+        a: .12 + Math.random() * .5,
+        tw: .4 + Math.random() * 1.8,
+        ph: Math.random() * 6.283,
+        hue: Math.random() < .75 ? "#ffffff" : (Math.random() < .5 ? "#a9d9ff" : "#ffd9b0")
+      });
+    }
+    bokeh = [];
+    const cols = ["#6d5ba8", "#5a8fff", "#ffb066", "#ff6fae"];
+    for(let i = 0; i < 5; i++){
+      bokeh.push({
+        nx: Math.random(), ny: Math.random(),
+        r: 120 + Math.random() * 190,
+        a: .035 + Math.random() * .04,
+        ph: Math.random() * 6.283,
+        hue: cols[i % cols.length]
+      });
+    }
+  }
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    [bg, fx].forEach(c => {
+      c.width = Math.floor(W * DPR);
+      c.height = Math.floor(H * DPR);
+      c.style.width = W + "px";
+      c.style.height = H + "px";
+    });
+    bctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    fctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    fitScene();
+    measure();
+    seedBack();
+  }
+
+  /* ---------- ambient confetti ---------- */
+  function makeAmbient(){
+    const b = sceneBox;
+    const x = b.left + b.width * (.28 + Math.random() * .46) + (Math.random() - .5) * 60;
+    const y = b.top + b.height * (.45 + Math.random() * .10);
+    const size = 2 + Math.pow(Math.random(), 1.8) * 8;
+    const shapeRoll = Math.random();
+    return {
+      x, y,
+      vx: (Math.random() - .5) * 16,
+      vy: -(8 + Math.random() * 26),
+      size,
+      rot: Math.random() * Math.PI * 2,
+      vr: (Math.random() - .5) * 1.1,
+      color: CANVAS_COLORS[(Math.random() * CANVAS_COLORS.length) | 0],
+      shape: shapeRoll < .44 ? "star" : (shapeRoll < .78 ? "dot" : (shapeRoll < .94 ? "sparkle" : "ring")),
+      glow: Math.random() < .32,
+      age: 0,
+      life: 9 + Math.random() * 9,
+      phase: Math.random() * 6.283,
+      tw: .8 + Math.random() * 1.8,
+      amp: 6 + Math.random() * 14
+    };
+  }
+
+  function prefillAmbient(){
+    ambient = [];
+    const n = REDUCE ? 24 : 54;
+    for(let i = 0; i < n; i++){
+      const p = makeAmbient();
+      p.age = p.life * (.04 + Math.random() * .72);
+      p.y -= Math.abs(p.vy) * p.age * .92;
+      p.x += Math.sin(p.age * .7 + p.phase) * 26;
+      ambient.push(p);
+    }
+  }
+
+  /* ---------- particles drawing ---------- */
+  function traceStar(ctx, r){
+    ctx.beginPath();
+    for(let i = 0; i < 10; i++){
+      const a = -Math.PI / 2 + i * Math.PI / 5;
+      const rr = i % 2 ? r * .44 : r;
+      const x = Math.cos(a) * rr, y = Math.sin(a) * rr;
+      i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.closePath();
+  }
+  function traceSparkle(ctx, r){
+    const q = r * .16;
+    ctx.beginPath();
+    ctx.moveTo(0, -r);
+    ctx.quadraticCurveTo(q, -q, r, 0);
+    ctx.quadraticCurveTo(q, q, 0, r);
+    ctx.quadraticCurveTo(-q, q, -r, 0);
+    ctx.quadraticCurveTo(-q, -q, 0, -r);
+    ctx.closePath();
+  }
+
+  function drawPiece(ctx, p, alpha){
+    const s = p.size;
+    if(alpha <= .002) return;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.globalAlpha = alpha;
+    if(p.glow && s > 3.2){
+      const sp = glowSprite(p.color);
+      const gs = s * 3.4;
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = alpha * .30;
+      ctx.drawImage(sp, -gs / 2, -gs / 2, gs, gs);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = alpha;
+    }
+    ctx.fillStyle = p.color;
+    if(p.shape === "dot"){
+      ctx.beginPath(); ctx.arc(0, 0, s * .52, 0, 6.2832); ctx.fill();
+      if(s > 4){
+        ctx.globalAlpha = alpha * .32;
+        ctx.fillStyle = "#fff";
+        ctx.beginPath(); ctx.arc(-s * .15, -s * .16, s * .17, 0, 6.2832); ctx.fill();
+      }
+    }else if(p.shape === "ring"){
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = Math.max(.8, s * .16);
+      ctx.beginPath(); ctx.arc(0, 0, s * .5, 0, 6.2832); ctx.stroke();
+    }else if(p.shape === "sparkle"){
+      traceSparkle(ctx, s * .8); ctx.fill();
+      if(s > 4){
+        ctx.globalAlpha = alpha * .5;
+        ctx.fillStyle = "#fff";
+        ctx.beginPath(); ctx.arc(0, 0, s * .13, 0, 6.2832); ctx.fill();
+      }
+    }else{
+      traceStar(ctx, s * .78); ctx.fill();
+      if(s > 5.5){
+        ctx.globalAlpha = alpha * .3;
+        ctx.fillStyle = "#fff";
+        ctx.beginPath(); ctx.arc(-s * .1, -s * .12, s * .1, 0, 6.2832); ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function addBurst(x, y, n, power, warm){
+    const count = n || 20;
+    for(let i = 0; i < count; i++){
+      const a = Math.random() * Math.PI * 2;
+      const sp = (40 + Math.random() * 210) * (power || 1);
+      bursts.push({
+        x, y,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp - 30,
+        size: 2.4 + Math.random() * 6,
+        rot: Math.random() * 6.28,
+        vr: (Math.random() - .5) * 7,
+        color: warm
+          ? (Math.random() < .55 ? "#ffd58a" : "#fff6e2")
+          : CANVAS_COLORS[(Math.random() * CANVAS_COLORS.length) | 0],
+        shape: Math.random() < .5 ? "star" : (Math.random() < .6 ? "sparkle" : "dot"),
+        glow: Math.random() < .4,
+        age: 0,
+        life: 1.1 + Math.random() * 1.5
+      });
+    }
+    ripples.push({ x, y, age: 0, life: .7, color: warm ? "255,220,160" : "255,255,255" });
+  }
+
+  function spawnSparkle(x, y){
+    const warm = Math.random() < .4;
+    sparks.push({
+      x: x + (Math.random() - .5) * 8,
+      y: y + (Math.random() - .5) * 8,
+      vx: (Math.random() - .5) * 22,
+      vy: -6 - Math.random() * 22,
+      size: 1.3 + Math.random() * 2.6,
+      rot: Math.random() * 6.28,
+      vr: (Math.random() - .5) * 3,
+      color: warm ? "#ffe0a8" : (Math.random() < .5 ? "#fff" : "#bfe4ff"),
+      shape: Math.random() < .7 ? "sparkle" : "dot",
+      age: 0,
+      life: .55 + Math.random() * .8
+    });
+  }
+
+  function puffSmoke(){
+    const p = vbPoint(380, 252);
+    for(let i = 0; i < 30; i++){
+      smoke.push({
+        x: p.x + (Math.random() - .5) * 14,
+        y: p.y - 4 + (Math.random() - .5) * 10,
+        vx: (Math.random() - .5) * 24,
+        vy: -18 - Math.random() * 40,
+        r: 2.5 + Math.random() * 7,
+        age: 0,
+        life: 2.2 + Math.random() * 2.6,
+        ph: Math.random() * 6.28
+      });
+    }
+  }
+
+  function flameBurst(warm){
+    const p = vbPoint(380, 240);
+    addBurst(p.x, p.y, 26, .85, warm);
+  }
+
+  /* ---------- background loop ---------- */
+  function drawBackground(t){
+    bctx.clearRect(0, 0, W, H);
+
+    bctx.globalCompositeOperation = "lighter";
+    for(const b of bokeh){
+      const x = b.nx * W + Math.sin(t * .07 + b.ph) * 40;
+      const y = b.ny * H + Math.cos(t * .05 + b.ph) * 30;
+      const s = b.r;
+      bctx.globalAlpha = b.a * (.8 + .2 * Math.sin(t * .4 + b.ph));
+      bctx.drawImage(glowSprite(b.hue), x - s, y - s, s * 2, s * 2);
+    }
+
+    bctx.globalCompositeOperation = "source-over";
+    for(const s of backStars){
+      const tw = .55 + .45 * Math.sin(t * s.tw + s.ph);
+      bctx.globalAlpha = s.a * tw;
+      bctx.fillStyle = s.hue;
+      bctx.beginPath();
+      bctx.arc(s.x, s.y, s.r, 0, 6.2832);
+      bctx.fill();
+    }
+    bctx.globalAlpha = 1;
+  }
+
+  /* ---------- foreground loop ---------- */
+  let spawnAcc = 0;
+
+  function updateParticles(t, dt){
+    // ambient confetti
+    const rate = REDUCE ? 2.2 : 8.5;
+    spawnAcc += dt;
+    while(spawnAcc > 1 / rate){
+      spawnAcc -= 1 / rate;
+      if(ambient.length < (REDUCE ? 55 : 155)) ambient.push(makeAmbient());
+    }
+
+    for(let i = ambient.length - 1; i >= 0; i--){
+      const p = ambient[i];
+      p.age += dt;
+      if(p.age >= p.life){ ambient.splice(i, 1); continue; }
+      p.x += (p.vx + Math.sin(p.age * .8 + p.phase) * p.amp) * dt;
+      p.y += p.vy * dt;
+      p.rot += p.vr * dt;
+      if(p.y < -40 || p.x < -40 || p.x > W + 40) ambient.splice(i, 1);
+    }
+
+    for(let i = bursts.length - 1; i >= 0; i--){
+      const p = bursts[i];
+      p.age += dt;
+      if(p.age >= p.life){ bursts.splice(i, 1); continue; }
+      p.vy += 105 * dt;
+      p.vx *= (1 - 1.2 * dt);
+      p.vy *= (1 - .35 * dt);
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.rot += p.vr * dt;
+    }
+
+    for(let i = sparks.length - 1; i >= 0; i--){
+      const p = sparks[i];
+      p.age += dt;
+      if(p.age >= p.life){ sparks.splice(i, 1); continue; }
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.vy += 14 * dt;
+      p.rot += p.vr * dt;
+    }
+
+    for(let i = smoke.length - 1; i >= 0; i--){
+      const p = smoke[i];
+      p.age += dt;
+      if(p.age >= p.life){ smoke.splice(i, 1); continue; }
+      p.x += (p.vx + Math.sin(p.age * 1.4 + p.ph) * 10) * dt;
+      p.y += p.vy * dt;
+      p.vy *= (1 - .2 * dt);
+    }
+
+    for(let i = ripples.length - 1; i >= 0; i--){
+      const r = ripples[i];
+      r.age += dt;
+      if(r.age >= r.life) ripples.splice(i, 1);
+    }
+  }
+
+  function drawForeground(t){
+    fctx.clearRect(0, 0, W, H);
+
+    // ambient confetti
+    for(const p of ambient){
+      const fadeIn = Math.min(1, p.age / .8);
+      const fadeOut = Math.min(1, (p.life - p.age) / 2.4);
+      const twinkle = .72 + .28 * Math.sin(t * p.tw * 2 + p.phase);
+      drawPiece(fctx, p, p.glow ? fadeIn * fadeOut * twinkle : fadeIn * fadeOut * (0.55 + 0.45 * twinkle));
+    }
+
+    // bursts
+    for(const p of bursts){
+      const k = 1 - p.age / p.life;
+      drawPiece(fctx, p, k * (0.6 + 0.4 * Math.sin(p.age * 18 + p.rot)));
+    }
+
+    // sparkles
+    for(const p of sparks){
+      const k = 1 - p.age / p.life;
+      drawPiece(fctx, p, k);
+    }
+
+    // ripples
+    fctx.globalCompositeOperation = "lighter";
+    for(const r of ripples){
+      const k = r.age / r.life;
+      fctx.globalAlpha = (1 - k) * .32;
+      fctx.strokeStyle = `rgba(${r.color},1)`;
+      fctx.lineWidth = 1.2;
+      fctx.beginPath();
+      fctx.arc(r.x, r.y, 8 + k * 92, 0, 6.2832);
+      fctx.stroke();
+    }
+    fctx.globalAlpha = 1;
+    fctx.globalCompositeOperation = "source-over";
+
+    // smoke curls in front of everything
+    const sm = getSmokeSprite();
+    for(const p of smoke){
+      const k = 1 - p.age / p.life;
+      const r = (p.r + p.age * 22) * 2.5;
+      fctx.globalAlpha = k * k * .2;
+      fctx.drawImage(sm, p.x - r / 2, p.y - r / 2, r, r);
+    }
+    fctx.globalAlpha = 1;
+  }
+
+  let last = performance.now();
+  function tick(now){
+    const t = now / 1000;
+    let dt = (now - last) / 1000;
+    last = now;
+    if(dt > .05) dt = .05;
+    if(dt < 0) dt = 0;
+
+    drawBackground(t);
+    updateParticles(t, dt);
+    drawForeground(t);
+    requestAnimationFrame(tick);
+  }
+
+  /* ============================================================
+     candle interaction
+  ============================================================ */
+  const candleHit = $("#candleHit");
+  const hint = $("#hintText");
+  const live = $("#live");
+  let lit = true;
+  let relightTimer = null;
+
+  function setHint(text){
+    hint.textContent = text;
+  }
+
+  function blowOut(){
+    if(!lit){
+      relight();
+      return;
+    }
+    measure();
+    lit = false;
+    document.body.classList.add("blown");
+    puffSmoke();
+    addBurst(vbPoint(380, 248).x, vbPoint(380, 248).y, 12, .5, true);
+    setHint("愿望已寄往星河 ✦");
+    live.textContent = "蜡烛已吹灭，愿望已经寄往星河。";
+    clearTimeout(relightTimer);
+    relightTimer = setTimeout(relight, 7600);
+  }
+
+  function relight(){
+    if(lit) return;
+    lit = true;
+    document.body.classList.remove("blown");
+    setHint("点击蜡烛 · 许个愿");
+    live.textContent = "蜡烛重新亮起。";
+    flameBurst(true);
+    clearTimeout(relightTimer);
+    relightTimer = null;
+  }
+
+  candleHit.addEventListener("pointerdown", e => {
+    e.stopPropagation();
+  });
+  candleHit.addEventListener("click", e => {
+    e.stopPropagation();
+    blowOut();
+  });
+  candleHit.addEventListener("keydown", e => {
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      blowOut();
+    }
+  });
+
+  window.addEventListener("pointerdown", e => {
+    if(e.target && e.target.closest && e.target.closest("#candleHit")) return;
+    addBurst(e.clientX, e.clientY, 18, .9, false);
+  }, { passive: true });
+
+  let lastTrail = 0, lastX = 0, lastY = 0;
+  window.addEventListener("pointermove", e => {
+    if(!REDUCE){
+      const nx = (e.clientX / W - .5) * 2;
+      const ny = (e.clientY / H - .5) * 2;
+      document.documentElement.style.setProperty("--mx", nx.toFixed(3));
+      document.documentElement.style.setProperty("--my", ny.toFixed(3));
+    }
+    const now = performance.now();
+    if(now - lastTrail > 42 && Math.hypot(e.clientX - lastX, e.clientY - lastY) > 9){
+      lastTrail = now; lastX = e.clientX; lastY = e.clientY;
+      spawnSparkle(e.clientX, e.clientY);
+    }
+  }, { passive: true });
+
+  window.addEventListener("keydown", e => {
+    if(e.code === "Space" && !e.repeat){
+      e.preventDefault();
+      blowOut();
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    resize();
+  });
+
+  /* ============================================================
+     boot
+  ============================================================ */
+  fitScene();
+  measure();
+  resize();
+  prefillAmbient();
+
+  // make sure the scene box is measured once fonts / layout settle
+  requestAnimationFrame(() => {
+    measure();
+    prefillAmbient();
+    requestAnimationFrame(() => { measure(); });
+  });
+  setTimeout(measure, 2100);
+  window.addEventListener("load", () => { measure(); });
+
+  requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

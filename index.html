@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>张默语 · 石家庄</title>
-<meta name="description" content="张默语，石家庄。个人主页：做过的事、联系方式，和一些记录。">
+<meta name="description" content="张默语，石家庄的学生。做过的一些页面、喜欢的人，和一些还没想明白的问题。">
+<meta name="theme-color" content="#fffaf1">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <script>
@@ -29,7 +30,7 @@
     <nav class="nav" aria-label="主导航">
       <a href="#about">关于</a>
       <a href="#work">作品</a>
-      <a href="#notes">随笔</a>
+      <a href="#likes">喜欢</a>
       <a href="#contact">联系</a>
     </nav>
 
@@ -49,22 +50,53 @@
 
   <!-- ========== 首屏 ========== -->
   <section class="hero">
-    <div class="wrap">
-      <p class="eyebrow reveal">石家庄 · 2026</p>
-      <h1 class="reveal">张默语</h1>
-      <p class="lede reveal">
-        在石家庄。<br>
-        这个站用来放我做过的事、想清楚的问题，和一些还没想明白的东西。
-      </p>
+    <div class="wrap hero-inner">
+      <div class="hero-text">
+        <p class="eyebrow reveal">个人主页 · 2026</p>
+        <h1 class="reveal">张默语</h1>
+        <p class="lede reveal">
+          石家庄的一名学生，比较佛系。<br>
+          这里放我做过的东西，和喜欢的人。
+        </p>
 
-      <div class="hero-foot reveal">
-        <a class="btn" href="#work">看看作品 <span class="btn-arrow" aria-hidden="true">↘</span></a>
-        <a class="link-quiet" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a>
+        <ul class="chips reveal">
+          <li>学生</li>
+          <li>佛系</li>
+          <li>石家庄</li>
+        </ul>
+
+        <div class="hero-foot reveal">
+          <a class="btn" href="#work">看看作品 <span class="btn-arrow" aria-hidden="true">↘</span></a>
+          <a class="link-quiet" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a>
+        </div>
       </div>
-    </div>
-    <div class="hero-aside" aria-hidden="true">
-      <span class="hero-rule"></span>
-      <span class="hero-vtext">Portfolio — 2026</span>
+
+      <div class="sun" aria-hidden="true">
+        <svg viewBox="0 0 200 200" role="presentation">
+          <defs>
+            <radialGradient id="sunFill" cx="42%" cy="38%" r="70%">
+              <stop offset="0%" stop-color="#ffe9a8"/>
+              <stop offset="55%" stop-color="#ffc247"/>
+              <stop offset="100%" stop-color="#f2a01e"/>
+            </radialGradient>
+          </defs>
+          <g class="sun-rays" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+            <line x1="100" y1="8" x2="100" y2="30"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(30 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(60 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(90 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(120 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(150 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(180 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(210 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(240 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(270 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(300 100 100)"/>
+            <line x1="100" y1="8" x2="100" y2="30" transform="rotate(330 100 100)"/>
+          </g>
+          <circle cx="100" cy="100" r="47" fill="url(#sunFill)"/>
+        </svg>
+      </div>
     </div>
   </section>
 
@@ -73,23 +105,22 @@
     <div class="wrap section-grid">
       <div class="section-label"><span>关于</span><span class="num">01</span></div>
       <div class="section-body">
-        <h2 class="reveal">一个普通人的自我介绍</h2>
+        <h2 class="reveal">一个普通学生的自我介绍</h2>
         <div class="prose reveal">
+          <p>我叫张默语，石家庄人，现在是个学生。</p>
           <p>
-            你好，我是张默语，现在住在石家庄。
+            性格比较佛系，不太着急——事情慢慢做，做完了就放着，也觉得挺好。
           </p>
           <p>
-            这个网站是我自己手写的——没有模板，没有建站工具，只有几个文本文件。
-            它很轻，打开很快，也不需要服务器。我想用它记录一点长期的东西：
-            做过的事、想清楚的问题，以及偶尔的碎碎念。
-          </p>
-          <p>
-            页面上的内容还在慢慢补，欢迎随便看看。
+            这个网站是我自己手写的，没有模板，也没有用建站工具。
+            上面放我做过的东西、喜欢的人和事，还有一些没想明白的问题。
+            内容还在慢慢长，欢迎随便看看。
           </p>
         </div>
 
         <dl class="facts reveal">
           <dt>坐标</dt><dd>石家庄 · 河北</dd>
+          <dt>身份</dt><dd>学生</dd>
           <dt>邮箱</dt><dd><a class="inline-link" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a></dd>
           <dt>微信</dt><dd><button class="copy-chip" type="button" data-copy="Zeromoreforyou">Zeromoreforyou<span class="copy-hint">复制</span></button></dd>
           <dt>GitHub</dt><dd><a class="inline-link" href="https://github.com/zhanfmoyu17" target="_blank" rel="noreferrer noopener">zhanfmoyu17</a></dd>
@@ -105,36 +136,74 @@
       <div class="section-body">
         <h2 class="reveal">做过的一些东西</h2>
 
-        <div class="cards cards--single">
-          <!-- 想加作品：复制下面整个 <article>，改标题/描述/标签/链接 -->
+        <div class="cards">
+          <!-- 想加作品：复制一整个 <article class="card"> 改内容即可 -->
           <article class="card reveal">
-            <a class="card-link" href="https://zhanfmoyu17.github.io" aria-label="查看项目：这个小站">
-              <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
-              <h3>这个小站</h3>
-              <p>你正在看的页面本身。手写 HTML / CSS，零依赖，深色模式会记住你的选择。托管在 GitHub Pages，不花一分钱。</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li><li>GitHub Pages</li></ul>
+            <a class="card-link" href="works/cake-galaxy.html" target="_blank" rel="noreferrer noopener">
+              <div class="card-media"><img src="works/cake-galaxy.jpg" alt="星屑蛋糕的页面截图" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
+                <h3>星屑蛋糕</h3>
+                <p>玻璃罩里的星屑蛋糕，点一下蜡烛就能许愿。全部用 Canvas 画出来，没有用任何图片素材。</p>
+                <ul class="tags"><li>Canvas</li><li>纯前端</li><li>无依赖</li></ul>
+              </div>
+            </a>
+          </article>
+
+          <article class="card reveal">
+            <a class="card-link" href="works/cake-cyber.html" target="_blank" rel="noreferrer noopener">
+              <div class="card-media"><img src="works/cake-cyber.jpg" alt="赛博生日蛋糕的页面截图" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
+                <h3>赛博生日蛋糕</h3>
+                <p>霓虹字、星空和三层蛋糕，烛光会轻轻晃。纯 HTML + CSS，加一点 JS。</p>
+                <ul class="tags"><li>HTML</li><li>CSS</li><li>霓虹</li></ul>
+              </div>
+            </a>
+          </article>
+
+          <article class="card card--wide reveal">
+            <a class="card-link" href="https://zhanfmoyu17.github.io" target="_blank" rel="noreferrer noopener">
+              <div class="card-media"><img src="works/this-site.jpg" alt="这个小站的页面截图" loading="lazy"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
+                <h3>这个小站</h3>
+                <p>你正在看的页面本身。手写 HTML / CSS，零依赖，深色模式会记住你的选择。托管在 GitHub Pages，不花一分钱。</p>
+                <ul class="tags"><li>HTML</li><li>CSS</li><li>GitHub Pages</li></ul>
+              </div>
             </a>
           </article>
         </div>
-
-        <p class="section-note reveal">其余的东西还在整理，做好了会放上来。</p>
       </div>
     </div>
   </section>
 
-  <!-- ========== 随笔 ========== -->
-  <section class="section" id="notes">
+  <!-- ========== 喜欢 ========== -->
+  <section class="section" id="likes">
     <div class="wrap section-grid">
-      <div class="section-label"><span>随笔</span><span class="num">03</span></div>
+      <div class="section-label"><span>喜欢</span><span class="num">03</span></div>
       <div class="section-body">
-        <h2 class="reveal">最近写下的</h2>
-
-        <!-- 有文章后：把下面 .empty-block 删掉，换成
-             <a class="note reveal" href="链接"><time datetime="2026-11-01">2026.11.01</time><span class="note-title">标题</span><span class="note-arrow">↗</span></a> -->
-        <div class="empty-block reveal">
-          <p class="empty-title">这里还空着</p>
-          <p class="empty-sub">以后会放一些随笔和记录。</p>
+        <h2 class="reveal">喜欢的人和事</h2>
+        <div class="prose reveal">
+          <p>喜欢蔡徐坤。会听他的歌，也存了不少图，挑几张放在这儿。</p>
         </div>
+
+        <div class="gallery">
+          <figure class="shot reveal">
+            <img src="assets/ikun/1.jpg" alt="蔡徐坤（图 1）" loading="lazy"
+                 onerror="this.closest('.shot').classList.add('is-empty')">
+          </figure>
+          <figure class="shot reveal">
+            <img src="assets/ikun/2.jpg" alt="蔡徐坤（图 2）" loading="lazy"
+                 onerror="this.closest('.shot').classList.add('is-empty')">
+          </figure>
+          <figure class="shot reveal">
+            <img src="assets/ikun/3.jpg" alt="蔡徐坤（图 3）" loading="lazy"
+                 onerror="this.closest('.shot').classList.add('is-empty')">
+          </figure>
+        </div>
+
+        <p class="tiny-note reveal">图片来自网络，仅个人收藏，如有侵权请联系我删除。</p>
       </div>
     </div>
   </section>
@@ -145,7 +214,7 @@
       <div class="section-label"><span>联系</span><span class="num">04</span></div>
       <div class="section-body">
         <h2 class="reveal">想聊点什么？</h2>
-        <p class="prose reveal">不管是合作、提问，还是只想打个招呼，邮件和微信都能找到我。</p>
+        <p class="prose reveal">欢迎随便找我聊天，邮件和微信都能找到我。不着急，看到就会回。</p>
         <a class="big-mail reveal" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a>
 
         <ul class="socials reveal">

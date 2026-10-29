@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Starry Birthday Cake</title>
+<style>
+  :root{
+    --cyan: #00f0ff;
+    --magenta: #ff2ec4;
+    --purple: #a855f7;
+    --pink: #ff6ec7;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html,body{
+    width:100%; height:100%;
+    overflow:hidden;
+    background:#080414;
+    font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+    color:#eafcff;
+  }
+
+  body{
+    /* deep-space cyber gradient + neon nebula glows */
+    background:
+      radial-gradient(1200px 800px at 78% 18%, rgba(255,46,196,0.16), transparent 60%),
+      radial-gradient(1000px 700px at 16% 80%, rgba(0,240,255,0.13), transparent 60%),
+      radial-gradient(900px 900px at 50% 120%, rgba(168,85,247,0.22), transparent 60%),
+      linear-gradient(180deg, #070313 0%, #0c0622 45%, #140a30 100%);
+  }
+
+  /* ---------- canvas starfield ---------- */
+  #sky{
+    position:fixed; inset:0;
+    z-index:0;
+    display:block;
+  }
+
+  /* ---------- scene ---------- */
+  .scene{
+    position:relative; z-index:1;
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  .cake-svg{
+    width:min(88vw, 560px);
+    height:auto;
+    margin-top:3vh;
+    filter:
+      drop-shadow(0 0 28px rgba(168,85,247,0.35))
+      drop-shadow(0 0 60px rgba(0,240,255,0.18));
+    animation: float 7s ease-in-out infinite;
+  }
+
+  @keyframes float{
+    0%,100%{ transform: translateY(0) rotate(-0.4deg); }
+    50%    { transform: translateY(-14px) rotate(0.5deg); }
+  }
+
+  /* halo rings slow rotation */
+  .halo-rings{
+    transform-box: view-box;
+    transform-origin: 300px 430px;
+    animation: spin 70s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  /* candle flames */
+  .flame{
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: flicker 1.15s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%,100%{ transform: scale(1,1) rotate(-1deg); opacity:1; }
+    30%    { transform: scale(1.06,0.96) rotate(1.5deg); opacity:.92; }
+    60%    { transform: scale(0.94,1.05) rotate(-2deg); opacity:.84; }
+    80%    { transform: scale(1.02,0.98) rotate(1deg); opacity:1; }
+  }
+  .flame-glow{
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: glowpulse 2.1s ease-in-out infinite;
+  }
+  @keyframes glowpulse{
+    0%,100%{ opacity:.55; transform: scale(1); }
+    50%    { opacity:.95; transform: scale(1.15); }
+  }
+
+  /* ---------- title ---------- */
+  .title{
+    position:absolute; top:5%; left:50%;
+    transform:translateX(-50%);
+    text-align:center; pointer-events:none; z-index:3;
+    white-space:nowrap;
+  }
+  .title h1{
+    font-family:"Arial Black","PingFang SC","Microsoft YaHei",sans-serif;
+    font-weight:900;
+    font-size:clamp(30px, 6.2vw, 66px);
+    letter-spacing:.16em;
+    background:linear-gradient(180deg,#ffffff 0%, #bff6ff 35%, var(--cyan) 70%, var(--magenta) 100%);
+    -webkit-background-clip:text; background-clip:text;
+    -webkit-text-fill-color:transparent; color:transparent;
+    filter:
+      drop-shadow(0 0 10px rgba(0,240,255,0.9))
+      drop-shadow(0 0 26px rgba(255,46,196,0.6));
+    animation: neonFlicker 4.5s infinite;
+  }
+  .title p{
+    margin-top:.6em;
+    font-size:clamp(12px, 1.8vw, 17px);
+    letter-spacing:.5em;
+    color:#ffd7f0;
+    text-shadow:0 0 12px rgba(255,110,199,0.9), 0 0 30px rgba(168,85,247,0.7);
+    opacity:.9;
+  }
+
+  @keyframes neonFlicker{
+    0%,100%{ opacity:1; }
+    88%{ opacity:1; }
+    89%{ opacity:.55; }
+    90%{ opacity:1; }
+    93%{ opacity:.7; }
+    94%{ opacity:1; }
+  }
+
+  /* ---------- grain / paper texture overlay ---------- */
+  .grain{
+    position:fixed; inset:0; z-index:4;
+    pointer-events:none;
+    mix-blend-mode:overlay;
+    opacity:.12;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:160px 160px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sky"></canvas>
+
+<div class="scene">
+  <svg class="cake-svg" viewBox="0 0 600 720" xmlns="http://www.w3.org/2000/svg" aria-label="Cyber Starry Birthday Cake">
+    <defs>
+      <!-- hand-drawn wobble filter -->
+      <filter id="wobble" x="-8%" y="-8%" width="116%" height="116%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.028" numOctaves="2" seed="4" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3.6"/>
+      </filter>
+
+      <!-- halos -->
+      <radialGradient id="bigGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#7df9ff" stop-opacity="0.55"/>
+        <stop offset="35%" stop-color="#a855f7" stop-opacity="0.28"/>
+        <stop offset="70%" stop-color="#ff2ec4" stop-opacity="0.10"/>
+        <stop offset="100%" stop-color="#ff2ec4" stop-opacity="0"/>
+      </radialGradient>
+
+      <radialGradient id="flameGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffe066" stop-opacity="0.95"/>
+        <stop offset="40%" stop-color="#ffb03a" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#ff2ec4" stop-opacity="0"/>
+      </radialGradient>
+
+      <radialGradient id="flameGrad" cx="50%" cy="70%" r="60%">
+        <stop offset="0%" stop-color="#ffffff"/>
+        <stop offset="45%" stop-color="#fff6c8"/>
+        <stop offset="75%" stop-color="#ffd166"/>
+        <stop offset="100%" stop-color="#ff6ec7"/>
+      </radialGradient>
+
+      <!-- candle gradients -->
+      <linearGradient id="candle1" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2bd9ff"/><stop offset="1" stop-color="#7df9ff"/>
+      </linearGradient>
+      <linearGradient id="candle2" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#ff2ec4"/><stop offset="1" stop-color="#ff9ad5"/>
+      </linearGradient>
+      <linearGradient id="candle3" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#ffb03a"/><stop offset="1" stop-color="#ffe066"/>
+      </linearGradient>
+      <linearGradient id="candle4" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#a855f7"/><stop offset="1" stop-color="#c9a8ff"/>
+      </linearGradient>
+      <linearGradient id="candle5" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#ff5aa0"/><stop offset="1" stop-color="#ff8ac2"/>
+      </linearGradient>
+
+      <!-- tier body gradients -->
+      <linearGradient id="tier1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#3a2378"/>
+        <stop offset="1" stop-color="#180c38"/>
+      </linearGradient>
+      <linearGradient id="tier2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#462b8f"/>
+        <stop offset="1" stop-color="#1e0f46"/>
+      </linearGradient>
+      <linearGradient id="tier3" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#53339f"/>
+        <stop offset="1" stop-color="#241253"/>
+      </linearGradient>
+
+      <!-- frosting gradients -->
+      <linearGradient id="frost" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fff4fb"/>
+        <stop offset="1" stop-color="#ffd7f0"/>
+      </linearGradient>
+      <linearGradient id="frostTop" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset="1" stop-color="#ffe9f7"/>
+      </linearGradient>
+
+      <!-- flame path (local origin at base, tip up) -->
+      <path id="flamePath" d="M 0 0
+        C -8 -2, -8 -8, -6.8 -14
+        C -5.6 -19, -2.8 -22, 0 -24
+        C 2.8 -22, 5.6 -19, 6.8 -14
+        C 8 -8, 8 -2, 0 0 Z"/>
+    </defs>
+
+    <!-- ===== background halos / rings ===== -->
+    <g class="halo-rings">
+      <circle cx="300" cy="430" r="270" fill="url(#bigGlow)"/>
+      <circle cx="300" cy="430" r="205" fill="none" stroke="#00f0ff" stroke-opacity="0.22" stroke-width="1.4" stroke-dasharray="3 9"/>
+      <circle cx="300" cy="430" r="160" fill="none" stroke="#ff2ec4" stroke-opacity="0.20" stroke-width="1.1" stroke-dasharray="1 7"/>
+      <circle cx="300" cy="430" r="118" fill="none" stroke="#a855f7" stroke-opacity="0.26" stroke-width="1.6" stroke-dasharray="6 6"/>
+    </g>
+
+    <!-- ===== cake ===== -->
+    <g id="cake" filter="url(#wobble)">
+      <!-- plate -->
+      <ellipse cx="300" cy="610" rx="215" ry="24" fill="#120a2e" stroke="#00f0ff" stroke-opacity="0.35" stroke-width="1.4"/>
+      <path d="M 300 610 C 210 610 160 630 155 634 L 445 634 C 440 630 390 610 300 610 Z" fill="#0d0826" stroke="#00f0ff" stroke-opacity="0.25" stroke-width="1"/>
+      <rect x="235" y="634" width="130" height="12" rx="5" fill="#120a2e" stroke="#a855f7" stroke-opacity="0.3" stroke-width="1"/>
+      <ellipse cx="300" cy="648" rx="88" ry="12" fill="#0a0520" stroke="#a855f7" stroke-opacity="0.3" stroke-width="1"/>
+      <ellipse cx="300" cy="606" rx="190" ry="16" fill="none" stroke="#7df9ff" stroke-opacity="0.28" stroke-width="1"/>
+
+      <!-- bottom tier -->
+      <rect x="120" y="470" width="360" height="132" rx="13" fill="url(#tier1)"/>
+      <rect x="120" y="470" width="360" height="132" rx="13" fill="none" stroke="#a855f7" stroke-opacity="0.4" stroke-width="1.2"/>
+      <ellipse cx="300" cy="470" rx="180" ry="22" fill="url(#frostTop)"/>
+
+      <!-- middle tier -->
+      <rect x="150" y="400" width="300" height="70" rx="12" fill="url(#tier2)"/>
+      <rect x="150" y="400" width="300" height="70" rx="12" fill="none" stroke="#ff2ec4" stroke-opacity="0.4" stroke-width="1.1"/>
+      <ellipse cx="300" cy="400" rx="150" ry="20" fill="url(#frostTop)"/>
+
+      <!-- top tier -->
+      <rect x="185" y="340" width="230" height="60" rx="10" fill="url(#tier3)"/>
+      <rect x="185" y="340" width="230" height="60" rx="10" fill="none" stroke="#00f0ff" stroke-opacity="0.45" stroke-width="1.2"/>
+      <ellipse cx="300" cy="340" rx="115" ry="18" fill="url(#frostTop)"/>
+
+      <!-- neon rim highlights -->
+      <path d="M 122 470 L 478 470" stroke="#7df9ff" stroke-opacity="0.5" stroke-width="1.4" fill="none"/>
+      <path d="M 152 400 L 448 400" stroke="#ff8ac2" stroke-opacity="0.5" stroke-width="1.2" fill="none"/>
+      <path d="M 187 340 L 413 340" stroke="#7df9ff" stroke-opacity="0.55" stroke-width="1.3" fill="none"/>
+
+      <!-- candles -->
+      <g class="candle">
+        <rect x="232" y="272" width="12" height="56" rx="3" fill="url(#candle1)"/>
+        <rect x="232" y="272" width="12" height="56" rx="3" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+        <path d="M 232 288 L 244 284 L 244 289 L 232 293 Z" fill="#ffffff" opacity="0.35"/>
+        <line x1="238" y1="266" x2="238" y2="272" stroke="#1b1030" stroke-width="2"/>
+      </g>
+      <g class="candle">
+        <rect x="263" y="268" width="12" height="60" rx="3" fill="url(#candle2)"/>
+        <rect x="263" y="268" width="12" height="60" rx="3" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+        <path d="M 263 286 L 275 282 L 275 287 L 263 291 Z" fill="#ffffff" opacity="0.35"/>
+        <line x1="269" y1="262" x2="269" y2="268" stroke="#1b1030" stroke-width="2"/>
+      </g>
+      <g class="candle">
+        <rect x="294" y="264" width="12" height="64" rx="3" fill="url(#candle3)"/>
+        <rect x="294" y="264" width="12" height="64" rx="3" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+        <path d="M 294 284 L 306 280 L 306 285 L 294 289 Z" fill="#ffffff" opacity="0.35"/>
+        <line x1="300" y1="258" x2="300" y2="264" stroke="#1b1030" stroke-width="2"/>
+      </g>
+      <g class="candle">
+        <rect x="325" y="268" width="12" height="60" rx="3" fill="url(#candle4)"/>
+        <rect x="325" y="268" width="12" height="60" rx="3" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+        <path d="M 325 286 L 337 282 L 337 287 L 325 291 Z" fill="#ffffff" opacity="0.35"/>
+        <line x1="331" y1="262" x2="331" y2="268" stroke="#1b1030" stroke-width="2"/>
+      </g>
+      <g class="candle">
+        <rect x="356" y="272" width="12" height="56" rx="3" fill="url(#candle5)"/>
+        <rect x="356" y="272" width="12" height="56" rx="3" fill="none" stroke="#ffffff" stroke-opacity="0.3" stroke-width="1"/>
+        <path d="M 356 288 L 368 284 L 368 289 L 356 293 Z" fill="#ffffff" opacity="0.35"/>
+        <line x1="362" y1="266" x2="362" y2="272" stroke="#1b1030" stroke-width="2"/>
+      </g>
+
+      <!-- drips + sprinkles generated by JS -->
+      <g id="drips"></g>
+      <g id="sprinkles"></g>
+    </g>
+
+    <!-- ===== flames (crisp, animated) ===== -->
+    <g id="flames">
+      <g class="flame" style="animation-delay:0s">
+        <circle class="flame-glow" cx="238" cy="250" r="15" fill="url(#flameGlow)"/>
+        <use href="#flamePath" x="238" y="262" fill="url(#flameGrad)"/>
+        <circle class="flame-core" cx="238" cy="254" r="2.6" fill="#ffffff"/>
+      </g>
+      <g class="flame" style="animation-delay:0.18s">
+        <circle class="flame-glow" cx="269" cy="248" r="16" fill="url(#flameGlow)"/>
+        <use href="#flamePath" x="269" y="260" fill="url(#flameGrad)"/>
+        <circle class="flame-core" cx="269" cy="252" r="2.6" fill="#ffffff"/>
+      </g>
+      <g class="flame" style="animation-delay:0.32s">
+        <circle class="flame-glow" cx="300" cy="246" r="18" fill="url(#flameGlow)"/>
+        <use href="#flamePath" x="300" y="258" fill="url(#flameGrad)"/>
+        <circle class="flame-core" cx="300" cy="250" r="3" fill="#ffffff"/>
+      </g>
+      <g class="flame" style="animation-delay:0.1s">
+        <circle class="flame-glow" cx="331" cy="248" r="16" fill="url(#flameGlow)"/>
+        <use href="#flamePath" x="331" y="260" fill="url(#flameGrad)"/>
+        <circle class="flame-core" cx="331" cy="252" r="2.6" fill="#ffffff"/>
+      </g>
+      <g class="flame" style="animation-delay:0.24s">
+        <circle class="flame-glow" cx="362" cy="250" r="15" fill="url(#flameGlow)"/>
+        <use href="#flamePath" x="362" y="262" fill="url(#flameGrad)"/>
+        <circle class="flame-core" cx="362" cy="254" r="2.6" fill="#ffffff"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="title">
+    <h1>HAPPY BIRTHDAY</h1>
+    <p>CYBER STARRY · BIRTHDAY CAKE</p>
+  </div>
+</div>
+
+<div class="grain"></div>
+
+<script>
+(function(){
+  "use strict";
+  const SVGNS = "http://www.w3.org/2000/svg";
+
+  /* ================= SVG decoration generation ================= */
+
+  function rand(a,b){ return a + Math.random()*(b-a); }
+
+  function dripBand(x0,x1,y,dropMax,segments){
+    const step=(x1-x0)/segments;
+    let d = `M ${x0} ${y} L ${x1} ${y}`;
+    for(let i=segments-1;i>=0;i--){
+      const xb = x0 + i*step, xa = xb + step, mid = (xa+xb)/2;
+      const drop = Math.random()<0.55 ? rand(8,dropMax) : rand(2,6);
+      d += ` L ${xa} ${y+5} Q ${mid} ${y+drop} ${xb} ${y+5}`;
+    }
+    return d + " Z";
+  }
+
+  const dripDefs = [
+    { x0:122, x1:478, y:470, dropMax:30, seg:11 },
+    { x0:152, x1:448, y:400, dropMax:26, seg:10 },
+    { x0:187, x1:413, y:340, dropMax:22, seg:9 }
+  ];
+
+  const dripsGroup = document.getElementById("drips");
+  dripDefs.forEach(function(def){
+    const p = document.createElementNS(SVGNS, "path");
+    p.setAttribute("d", dripBand(def.x0, def.x1, def.y, def.dropMax, def.seg));
+    p.setAttribute("fill", "url(#frost)");
+    p.setAttribute("stroke", "#ffd7f0");
+    p.setAttribute("stroke-width", "0.6");
+    dripsGroup.appendChild(p);
+  });
+
+  const sprinkleColors = ["#00f0ff","#ff2ec4","#ffe066","#a855f7","#ff6ec7","#ffffff"];
+  const sprinklesGroup = document.getElementById("sprinkles");
+  function addSprinkles(x0,x1,y0,y1,n){
+    for(let i=0;i<n;i++){
+      const x = rand(x0,x1), y = rand(y0,y1);
+      const ang = rand(0,180), len = rand(9,18), w = rand(2.2,3.6);
+      const g = document.createElementNS(SVGNS, "g");
+      g.setAttribute("transform", `translate(${x} ${y}) rotate(${ang})`);
+      const r = document.createElementNS(SVGNS, "rect");
+      r.setAttribute("x", -w/2); r.setAttribute("y", -len/2);
+      r.setAttribute("width", w); r.setAttribute("height", len);
+      r.setAttribute("rx", w/2);
+      r.setAttribute("fill", sprinkleColors[(Math.random()*sprinkleColors.length)|0]);
+      r.setAttribute("opacity", rand(0.7,1));
+      g.appendChild(r);
+      sprinklesGroup.appendChild(g);
+    }
+  }
+  addSprinkles(128, 472, 505, 596, 16);
+  addSprinkles(158, 442, 430, 466, 12);
+  addSprinkles(192, 408, 366, 396, 10);
+
+  /* ================= canvas starfield / bokeh / particles ================= */
+
+  const canvas = document.getElementById("sky");
+  const ctx = canvas.getContext("2d");
+  let W=0, H=0, DPR=1;
+
+  const NEON = ["#00f0ff","#ff2ec4","#a855f7","#ff6ec7","#7df9ff","#ffe066","#8ab4ff"];
+  const pick = arr => arr[(Math.random()*arr.length)|0];
+
+  // pre-rendered glow sprites (fast + pretty)
+  const spriteCache = {};
+  function glowSprite(color){
+    let s = spriteCache[color];
+    if(s) return s;
+    s = document.createElement("canvas"); s.width = s.height = 64;
+    const c = s.getContext("2d");
+    const g = c.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0, color);
+    g.addColorStop(0.25, color);
+    g.addColorStop(0.6, color+"66");
+    g.addColorStop(1, color+"00");
+    c.fillStyle = g; c.fillRect(0,0,64,64);
+    spriteCache[color] = s;
+    return s;
+  }
+
+  let stars=[], bokeh=[], sparks=[], shots=[];
+
+  function seed(){
+    stars = [];
+    const n = Math.min(340, Math.floor(W*H/4200));
+    for(let i=0;i<n;i++){
+      stars.push({ nx:Math.random(), ny:Math.random(), r:rand(0.3,1.8),
+        a:rand(0.25,1), tw:rand(0.3,2.2), ph:rand(0,6.28), hue:pick(NEON) });
+    }
+    bokeh = [];
+    for(let i=0;i<18;i++){
+      bokeh.push({ nx:Math.random(), ny:Math.random(), r:rand(40,130),
+        a:rand(0.05,0.15), vy:rand(5,15), drift:rand(-8,8), ph:rand(0,6.28),
+        hue:pick(["#00f0ff","#ff2ec4","#a855f7","#ff6ec7"]) });
+    }
+    sparks = []; shots = [];
+  }
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.floor(W*DPR); canvas.height = Math.floor(H*DPR);
+    canvas.style.width = W+"px"; canvas.style.height = H+"px";
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    seed();
+  }
+
+  function flamePoints(){
+    const pts = [];
+    document.querySelectorAll(".flame-core").forEach(function(el){
+      const r = el.getBoundingClientRect();
+      pts.push({ x: r.left + r.width/2, y: r.top + r.height*0.35 });
+    });
+    return pts;
+  }
+
+  function spawnSpark(){
+    const pts = flamePoints();
+    if(!pts.length) return;
+    const p = pick(pts);
+    const sp = rand(10,60);
+    sparks.push({
+      x:p.x+rand(-2,2), y:p.y+rand(-2,2),
+      vx:rand(-18,18), vy:-rand(40,130)-sp*0.5,
+      life:0, max:rand(0.7,1.6), r:rand(1.2,3.2), hue:pick(NEON)
+    });
+  }
+
+  function burst(){
+    const pts = flamePoints();
+    if(!pts.length) return;
+    const p = pick(pts);
+    const n = Math.floor(rand(16,30));
+    for(let i=0;i<n;i++){
+      const a = rand(0,Math.PI*2), sp = rand(40,180);
+      sparks.push({ x:p.x, y:p.y, vx:Math.cos(a)*sp, vy:Math.sin(a)*sp,
+        life:0, max:rand(0.6,1.3), r:rand(1.4,3.4), hue:pick(NEON) });
+    }
+  }
+
+  function spawnShot(){
+    const fromTop = Math.random()<0.5;
+    const x = rand(W*0.05, W*0.95);
+    const y = fromTop ? rand(0, H*0.25) : rand(0, H*0.4);
+    const ang = rand(Math.PI*0.55, Math.PI*0.75); // downward
+    const sp = rand(500,900);
+    shots.push({ x, y, vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp,
+      life:0, max:rand(0.7,1.1), hue:pick(["#ffffff","#7df9ff","#ff6ec7"]) });
+  }
+
+  let last = performance.now(), burstTimer = 0, shotTimer = 2;
+
+  function frame(now){
+    const t = now*0.001;
+    let dt = (now-last)/1000; last = now;
+    if(dt>0.05) dt = 0.05;
+
+    ctx.clearRect(0,0,W,H);
+
+    // ---- bokeh (soft drifting blobs) ----
+    ctx.globalCompositeOperation = "source-over";
+    for(const b of bokeh){
+      let y = b.ny*H - t*b.vy;
+      const span = H + b.r*2;
+      y = ((y % span) + span) % span - b.r;
+      const x = b.nx*W + Math.sin(t*0.2+b.ph)*b.drift;
+      const g = ctx.createRadialGradient(x,y,0,x,y,b.r);
+      g.addColorStop(0, b.hue+"66");
+      g.addColorStop(0.5, b.hue+"22");
+      g.addColorStop(1, b.hue+"00");
+      ctx.globalAlpha = b.a*(0.7+0.3*Math.sin(t*0.6+b.ph));
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(x,y,b.r,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // ---- stars ----
+    for(const s of stars){
+      const x = s.nx*W, y = s.ny*H;
+      const tw = 0.55 + 0.45*Math.sin(t*s.tw + s.ph);
+      ctx.globalAlpha = s.a*tw;
+      ctx.fillStyle = s.hue;
+      ctx.beginPath(); ctx.arc(x,y,s.r,0,6.2832); ctx.fill();
+      if(s.r>1.25){
+        ctx.globalAlpha = s.a*tw*0.22;
+        ctx.beginPath(); ctx.arc(x,y,s.r*3.4,0,6.2832); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+
+    // ---- shooting stars ----
+    ctx.globalCompositeOperation = "lighter";
+    for(let i=shots.length-1;i>=0;i--){
+      const p = shots[i];
+      p.life += dt;
+      if(p.life>=p.max){ shots.splice(i,1); continue; }
+      p.x += p.vx*dt; p.y += p.vy*dt;
+      const k = 1 - p.life/p.max;
+      const tx = p.x - p.vx*0.09, ty = p.y - p.vy*0.09;
+      const grad = ctx.createLinearGradient(p.x,p.y,tx,ty);
+      grad.addColorStop(0, p.hue+"ff");
+      grad.addColorStop(1, p.hue+"00");
+      ctx.strokeStyle = grad;
+      ctx.globalAlpha = k;
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(tx,ty); ctx.stroke();
+      ctx.globalAlpha = k*0.9;
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath(); ctx.arc(p.x,p.y,1.6,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // ---- sparkles / particle bursts ----
+    ctx.globalCompositeOperation = "lighter";
+    for(let i=sparks.length-1;i>=0;i--){
+      const p = sparks[i];
+      p.life += dt;
+      if(p.life>=p.max){ sparks.splice(i,1); continue; }
+      p.vy += 42*dt;
+      p.vx *= (1 - 0.5*dt);
+      p.x += p.vx*dt; p.y += p.vy*dt;
+      const k = 1 - p.life/p.max;
+      const size = p.r*(0.5 + k*1.5)*3;
+      ctx.globalAlpha = k;
+      ctx.drawImage(glowSprite(p.hue), p.x-size/2, p.y-size/2, size, size);
+      ctx.globalAlpha = k*0.9;
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r*0.55,0,6.2832); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+
+    // ---- spawn logic ----
+    if(Math.random() < 0.5) spawnSpark();
+    burstTimer += dt;
+    if(burstTimer > rand(1.4,3.2)){ burst(); burstTimer = 0; }
+    shotTimer += dt;
+    if(shotTimer > rand(5,9)){ spawnShot(); shotTimer = 0; }
+
+    if(sparks.length > 600) sparks.splice(0, sparks.length-600);
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener("resize", resize);
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
