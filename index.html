@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>张默语 · 个人主页</title>
+<meta name="description" content="张默语的个人主页：作品、随笔与联系方式。">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<script>
+  /* 在页面绘制前定好主题，避免深色模式闪白 */
+  try {
+    var saved = localStorage.getItem('theme');
+    var dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.dataset.theme = saved || (dark ? 'dark' : 'light');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<!-- ========== 顶部导航 ========== -->
+<header class="site-head">
+  <div class="wrap head-inner">
+    <a class="brand" href="#top">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <!-- ↓ 改这里：导航栏左上角的名字 -->
+      默语
+    </a>
+
+    <nav class="nav" aria-label="主导航">
+      <a href="#about">关于</a>
+      <a href="#work">作品</a>
+      <a href="#notes">随笔</a>
+      <a href="#contact">联系</a>
+    </nav>
+
+    <button class="theme-btn" id="themeToggle" type="button" aria-label="切换深色模式" title="切换深色模式">
+      <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.2"/>
+        <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"/>
+      </svg>
+      <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8Z"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ========== 首屏 ========== -->
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow reveal">个人主页 · 2026</p>
+      <!-- ↓ 改这里：你的名字 -->
+      <h1 class="reveal">张默语</h1>
+      <!-- ↓ 改这里：一句话介绍自己（两行以内最好看） -->
+      <p class="lede reveal">
+        白天写代码，晚上写点没用的东西。<br>
+        这里放我的作品、笔记，和一些还没想明白的问题。
+      </p>
+
+      <div class="hero-foot reveal">
+        <a class="btn" href="#work">看看作品 <span class="btn-arrow" aria-hidden="true">↘</span></a>
+        <!-- ↓ 改这里：你的邮箱 -->
+        <a class="link-quiet" href="mailto:hello@example.com">hello@example.com</a>
+      </div>
+    </div>
+    <div class="hero-aside" aria-hidden="true">
+      <span class="hero-rule"></span>
+      <span class="hero-vtext">Portfolio — 2026</span>
+    </div>
+  </section>
+
+  <!-- ========== 关于 ========== -->
+  <section class="section" id="about">
+    <div class="wrap section-grid">
+      <div class="section-label"><span>关于</span><span class="num">01</span></div>
+      <div class="section-body">
+        <h2 class="reveal">一个普通人的自我介绍</h2>
+        <div class="prose reveal">
+          <p>
+            你好，我是默语。目前住在杭州，做和互联网有关的工作，
+            喜欢把复杂的事情拆成小块，再一块一块解决。
+          </p>
+          <p>
+            这个网站是我自己手写的——没有模板，没有建站工具，
+            只有几个文本文件。它很轻，打开很快，也不需要服务器。
+            我想用它记录一点长期的东西：做过的事、想清楚的问题、以及偶尔的碎碎念。
+          </p>
+        </div>
+
+        <dl class="facts reveal">
+          <dt>坐标</dt><dd>杭州 · 中国</dd>
+          <dt>在做</dt><dd>写代码，偶尔做点小工具</dd>
+          <dt>喜欢</dt><dd>手冲咖啡、黑胶、长距离散步</dd>
+          <dt>在读</dt><dd>《置身事内》</dd>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 作品 ========== -->
+  <section class="section" id="work">
+    <div class="wrap section-grid">
+      <div class="section-label"><span>作品</span><span class="num">02</span></div>
+      <div class="section-body">
+        <h2 class="reveal">做过的一些东西</h2>
+
+        <div class="cards">
+          <!-- ↓ 每个卡片是一小块，改标题/描述/标签/链接即可 -->
+          <article class="card reveal">
+            <a class="card-link" href="#" aria-label="查看项目：个人知识库">
+              <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
+              <h3>个人知识库</h3>
+              <p>把自己五年的笔记、书摘和截图整理成一个可以全文搜索的本地站点。数据完全在自己手里。</p>
+              <ul class="tags"><li>TypeScript</li><li>SQLite</li><li>离线优先</li></ul>
+            </a>
+          </article>
+
+          <article class="card reveal">
+            <a class="card-link" href="#" aria-label="查看项目：晨间日记">
+              <div class="card-top"><span class="card-year">2025</span><span class="card-arrow" aria-hidden="true">→</span></div>
+              <h3>晨间日记</h3>
+              <p>一个只有三个输入框的小应用，每天早上花两分钟写完，自动归档成 Markdown。</p>
+              <ul class="tags"><li>PWA</li><li>极简</li></ul>
+            </a>
+          </article>
+
+          <article class="card reveal">
+            <a class="card-link" href="#" aria-label="查看项目：城市散步地图">
+              <div class="card-top"><span class="card-year">2025</span><span class="card-arrow" aria-hidden="true">→</span></div>
+              <h3>城市散步地图</h3>
+              <p>把走过的路线和拍下的照片叠在地图上，生成一张属于自己的城市记忆图。</p>
+              <ul class="tags"><li>MapLibre</li><li>摄影</li></ul>
+            </a>
+          </article>
+
+          <article class="card reveal">
+            <a class="card-link" href="#" aria-label="查看项目：这个小站">
+              <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
+              <h3>这个小站</h3>
+              <p>你正在看的页面本身。三个文件，零依赖，手写 CSS，深色模式会记住你的选择。</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li></ul>
+            </a>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 随笔 ========== -->
+  <section class="section" id="notes">
+    <div class="wrap section-grid">
+      <div class="section-label"><span>随笔</span><span class="num">03</span></div>
+      <div class="section-body">
+        <h2 class="reveal">最近写下的</h2>
+
+        <div class="notes">
+          <!-- ↓ 每行一条，日期 + 标题 + 链接 -->
+          <a class="note reveal" href="#">
+            <time datetime="2026-10-12">2026.10.12</time>
+            <span class="note-title">为什么我把所有笔记都换成了纯文本</span>
+            <span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="note reveal" href="#">
+            <time datetime="2026-09-03">2026.09.03</time>
+            <span class="note-title">三十岁前想明白的三件小事</span>
+            <span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="note reveal" href="#">
+            <time datetime="2026-07-21">2026.07.21</time>
+            <span class="note-title">在杭州骑车通勤一个月</span>
+            <span class="note-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 联系 ========== -->
+  <section class="section contact" id="contact">
+    <div class="wrap section-grid">
+      <div class="section-label"><span>联系</span><span class="num">04</span></div>
+      <div class="section-body">
+        <h2 class="reveal">想聊点什么？</h2>
+        <p class="prose reveal">不管是合作、提问，还是只想打个招呼，邮件是最快找到我的方式。</p>
+        <!-- ↓ 改这里：换成你的邮箱 -->
+        <a class="big-mail reveal" href="mailto:hello@example.com">hello@example.com</a>
+
+        <ul class="socials reveal">
+          <li><a href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub</a></li>
+          <li><a href="https://x.com/" target="_blank" rel="noreferrer noopener">X</a></li>
+          <li><a href="https://www.zhihu.com/" target="_blank" rel="noreferrer noopener">知乎</a></li>
+          <li><a href="#">微信：your_wechat</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-inner">
+    <span>© <span id="year">2026</span> 张默语</span>
+    <span>手写 HTML / CSS · 无框架</span>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
