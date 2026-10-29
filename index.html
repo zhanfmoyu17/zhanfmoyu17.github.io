@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>张默语 · 个人主页</title>
-<meta name="description" content="张默语的个人主页：作品、随笔与联系方式。">
+<title>张默语 · 石家庄</title>
+<meta name="description" content="张默语，石家庄。个人主页：做过的事、联系方式，和一些记录。">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="style.css">
 <script>
@@ -23,7 +23,6 @@
   <div class="wrap head-inner">
     <a class="brand" href="#top">
       <span class="brand-dot" aria-hidden="true"></span>
-      <!-- ↓ 改这里：导航栏左上角的名字 -->
       默语
     </a>
 
@@ -51,19 +50,16 @@
   <!-- ========== 首屏 ========== -->
   <section class="hero">
     <div class="wrap">
-      <p class="eyebrow reveal">个人主页 · 2026</p>
-      <!-- ↓ 改这里：你的名字 -->
+      <p class="eyebrow reveal">石家庄 · 2026</p>
       <h1 class="reveal">张默语</h1>
-      <!-- ↓ 改这里：一句话介绍自己（两行以内最好看） -->
       <p class="lede reveal">
-        白天写代码，晚上写点没用的东西。<br>
-        这里放我的作品、笔记，和一些还没想明白的问题。
+        在石家庄。<br>
+        这个站用来放我做过的事、想清楚的问题，和一些还没想明白的东西。
       </p>
 
       <div class="hero-foot reveal">
         <a class="btn" href="#work">看看作品 <span class="btn-arrow" aria-hidden="true">↘</span></a>
-        <!-- ↓ 改这里：你的邮箱 -->
-        <a class="link-quiet" href="mailto:hello@example.com">hello@example.com</a>
+        <a class="link-quiet" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a>
       </div>
     </div>
     <div class="hero-aside" aria-hidden="true">
@@ -80,21 +76,23 @@
         <h2 class="reveal">一个普通人的自我介绍</h2>
         <div class="prose reveal">
           <p>
-            你好，我是默语。目前住在杭州，做和互联网有关的工作，
-            喜欢把复杂的事情拆成小块，再一块一块解决。
+            你好，我是张默语，现在住在石家庄。
           </p>
           <p>
-            这个网站是我自己手写的——没有模板，没有建站工具，
-            只有几个文本文件。它很轻，打开很快，也不需要服务器。
-            我想用它记录一点长期的东西：做过的事、想清楚的问题、以及偶尔的碎碎念。
+            这个网站是我自己手写的——没有模板，没有建站工具，只有几个文本文件。
+            它很轻，打开很快，也不需要服务器。我想用它记录一点长期的东西：
+            做过的事、想清楚的问题，以及偶尔的碎碎念。
+          </p>
+          <p>
+            页面上的内容还在慢慢补，欢迎随便看看。
           </p>
         </div>
 
         <dl class="facts reveal">
-          <dt>坐标</dt><dd>杭州 · 中国</dd>
-          <dt>在做</dt><dd>写代码，偶尔做点小工具</dd>
-          <dt>喜欢</dt><dd>手冲咖啡、黑胶、长距离散步</dd>
-          <dt>在读</dt><dd>《置身事内》</dd>
+          <dt>坐标</dt><dd>石家庄 · 河北</dd>
+          <dt>邮箱</dt><dd><a class="inline-link" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a></dd>
+          <dt>微信</dt><dd><button class="copy-chip" type="button" data-copy="Zeromoreforyou">Zeromoreforyou<span class="copy-hint">复制</span></button></dd>
+          <dt>GitHub</dt><dd><a class="inline-link" href="https://github.com/zhanfmoyu17" target="_blank" rel="noreferrer noopener">zhanfmoyu17</a></dd>
         </dl>
       </div>
     </div>
@@ -107,44 +105,19 @@
       <div class="section-body">
         <h2 class="reveal">做过的一些东西</h2>
 
-        <div class="cards">
-          <!-- ↓ 每个卡片是一小块，改标题/描述/标签/链接即可 -->
+        <div class="cards cards--single">
+          <!-- 想加作品：复制下面整个 <article>，改标题/描述/标签/链接 -->
           <article class="card reveal">
-            <a class="card-link" href="#" aria-label="查看项目：个人知识库">
-              <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
-              <h3>个人知识库</h3>
-              <p>把自己五年的笔记、书摘和截图整理成一个可以全文搜索的本地站点。数据完全在自己手里。</p>
-              <ul class="tags"><li>TypeScript</li><li>SQLite</li><li>离线优先</li></ul>
-            </a>
-          </article>
-
-          <article class="card reveal">
-            <a class="card-link" href="#" aria-label="查看项目：晨间日记">
-              <div class="card-top"><span class="card-year">2025</span><span class="card-arrow" aria-hidden="true">→</span></div>
-              <h3>晨间日记</h3>
-              <p>一个只有三个输入框的小应用，每天早上花两分钟写完，自动归档成 Markdown。</p>
-              <ul class="tags"><li>PWA</li><li>极简</li></ul>
-            </a>
-          </article>
-
-          <article class="card reveal">
-            <a class="card-link" href="#" aria-label="查看项目：城市散步地图">
-              <div class="card-top"><span class="card-year">2025</span><span class="card-arrow" aria-hidden="true">→</span></div>
-              <h3>城市散步地图</h3>
-              <p>把走过的路线和拍下的照片叠在地图上，生成一张属于自己的城市记忆图。</p>
-              <ul class="tags"><li>MapLibre</li><li>摄影</li></ul>
-            </a>
-          </article>
-
-          <article class="card reveal">
-            <a class="card-link" href="#" aria-label="查看项目：这个小站">
+            <a class="card-link" href="https://zhanfmoyu17.github.io" aria-label="查看项目：这个小站">
               <div class="card-top"><span class="card-year">2026</span><span class="card-arrow" aria-hidden="true">→</span></div>
               <h3>这个小站</h3>
-              <p>你正在看的页面本身。三个文件，零依赖，手写 CSS，深色模式会记住你的选择。</p>
-              <ul class="tags"><li>HTML</li><li>CSS</li></ul>
+              <p>你正在看的页面本身。手写 HTML / CSS，零依赖，深色模式会记住你的选择。托管在 GitHub Pages，不花一分钱。</p>
+              <ul class="tags"><li>HTML</li><li>CSS</li><li>GitHub Pages</li></ul>
             </a>
           </article>
         </div>
+
+        <p class="section-note reveal">其余的东西还在整理，做好了会放上来。</p>
       </div>
     </div>
   </section>
@@ -156,23 +129,11 @@
       <div class="section-body">
         <h2 class="reveal">最近写下的</h2>
 
-        <div class="notes">
-          <!-- ↓ 每行一条，日期 + 标题 + 链接 -->
-          <a class="note reveal" href="#">
-            <time datetime="2026-10-12">2026.10.12</time>
-            <span class="note-title">为什么我把所有笔记都换成了纯文本</span>
-            <span class="note-arrow" aria-hidden="true">↗</span>
-          </a>
-          <a class="note reveal" href="#">
-            <time datetime="2026-09-03">2026.09.03</time>
-            <span class="note-title">三十岁前想明白的三件小事</span>
-            <span class="note-arrow" aria-hidden="true">↗</span>
-          </a>
-          <a class="note reveal" href="#">
-            <time datetime="2026-07-21">2026.07.21</time>
-            <span class="note-title">在杭州骑车通勤一个月</span>
-            <span class="note-arrow" aria-hidden="true">↗</span>
-          </a>
+        <!-- 有文章后：把下面 .empty-block 删掉，换成
+             <a class="note reveal" href="链接"><time datetime="2026-11-01">2026.11.01</time><span class="note-title">标题</span><span class="note-arrow">↗</span></a> -->
+        <div class="empty-block reveal">
+          <p class="empty-title">这里还空着</p>
+          <p class="empty-sub">以后会放一些随笔和记录。</p>
         </div>
       </div>
     </div>
@@ -184,15 +145,12 @@
       <div class="section-label"><span>联系</span><span class="num">04</span></div>
       <div class="section-body">
         <h2 class="reveal">想聊点什么？</h2>
-        <p class="prose reveal">不管是合作、提问，还是只想打个招呼，邮件是最快找到我的方式。</p>
-        <!-- ↓ 改这里：换成你的邮箱 -->
-        <a class="big-mail reveal" href="mailto:hello@example.com">hello@example.com</a>
+        <p class="prose reveal">不管是合作、提问，还是只想打个招呼，邮件和微信都能找到我。</p>
+        <a class="big-mail reveal" href="mailto:zmy3416726160@qq.com">zmy3416726160@qq.com</a>
 
         <ul class="socials reveal">
-          <li><a href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub</a></li>
-          <li><a href="https://x.com/" target="_blank" rel="noreferrer noopener">X</a></li>
-          <li><a href="https://www.zhihu.com/" target="_blank" rel="noreferrer noopener">知乎</a></li>
-          <li><a href="#">微信：your_wechat</a></li>
+          <li><a href="https://github.com/zhanfmoyu17" target="_blank" rel="noreferrer noopener">GitHub</a></li>
+          <li><button type="button" data-copy="Zeromoreforyou">微信 · Zeromoreforyou</button></li>
         </ul>
       </div>
     </div>

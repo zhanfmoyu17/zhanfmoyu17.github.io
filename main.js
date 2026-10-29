@@ -49,4 +49,48 @@
   // ---------- 3. 页脚年份 ----------
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  // ---------- 4. 点一下复制微信号 ----------
+  document.querySelectorAll('[data-copy]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var text = btn.getAttribute('data-copy');
+
+      function flash(label) {
+        var hint = btn.querySelector('.copy-hint');
+        if (!hint) {
+          hint = document.createElement('span');
+          hint.className = 'copy-hint';
+          btn.appendChild(hint);
+        }
+        var original = hint.getAttribute('data-original') || hint.textContent || '复制';
+        hint.setAttribute('data-original', original);
+        hint.textContent = label;
+        hint.classList.add('is-done');
+        setTimeout(function () {
+          hint.textContent = original;
+          hint.classList.remove('is-done');
+        }, 1600);
+      }
+
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        document.body.appendChild(ta);
+        ta.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        flash(ok ? '已复制' : '复制失败');
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(function () { flash('已复制'); }, fallback);
+      } else {
+        fallback();
+      }
+    });
+  });
 })();
