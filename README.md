@@ -1,5 +1,10 @@
 # 我的个人网站
 
+> ### ✅ 已上线
+> **网址：https://zhanfmoyu17.github.io**
+> 仓库：https://github.com/zhanfmoyu17/zhanfmoyu17.github.io
+> 托管：GitHub Pages（免费、HTTPS、无需备案、无需服务器）
+
 一个手写的静态个人主页：**不依赖任何框架、不需要数据库、没有月租**。
 所有内容都在三个文件里，改完保存刷新就能看到。
 
@@ -51,7 +56,10 @@ my-site/
 
 ---
 
-## 三、让它上线（免费，10 分钟）
+## 三、上线（已完成，可跳过）
+
+> 这一节已经不用做了 —— 网站已经在 GitHub Pages 上跑起来了。
+> 保留在这里，是万一以后想换平台时有个参考。
 
 网站只是三个静态文件，所以不需要买服务器。三条路，选一条：
 
@@ -117,6 +125,33 @@ my-site/
 
 这个文件夹就是网站的全部。建议在 GitHub 上放一份（顺便就上线了），或者丢进 iCloud / 坚果云。
 不要只留在这台电脑的桌面上。
+
+---
+
+## 六、以后怎么更新
+
+**方式 1：直接改 GitHub 上的文件（最快）**
+
+打开 https://github.com/zhanfmoyu17/zhanfmoyu17.github.io ，点 `index.html` → 右上角铅笔图标 → 改文字 → 底部 **Commit changes**。约 1 分钟后线上生效。
+
+**方式 2：改本地文件，然后重新发布**
+
+本地 `my-site/` 里的文件才是"源码"，改完后需要同步到 GitHub。
+⚠️ 这台机器现在 **`git push` 连不上 github.com**（443 端口被网络挡住，`api.github.com` 却正常），所以别直接用 `git push`，会卡住。有三个办法：
+
+- 用方式 1 在网页上改（推荐）
+- 让我帮你同步（把改好的文件发我，或者直接说改什么）
+- 换网络环境（手机热点 / 公司网络）后再试 `git push`
+
+**方式 3：以后想正经用命令行**
+
+换到能连通 github.com 的网络后：
+
+```bash
+cd ~/Desktop/创造/my-site
+git clone https://github.com/zhanfmoyu17/zhanfmoyu17.github.io.git tmp
+# 或直接 git remote add origin ... 然后 git push
+```
 
 ---
 
